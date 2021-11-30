@@ -1,7 +1,9 @@
-from PyQt5.QtWidgets import QApplication
-from go import Go
 import sys
 
+from PyQt5.QtWidgets import QApplication
+
+from GoApplication import GoApplication
+
 app = QApplication([])
-myGo = Go()
+myGo = GoApplication()
 sys.exit(app.exec_())
