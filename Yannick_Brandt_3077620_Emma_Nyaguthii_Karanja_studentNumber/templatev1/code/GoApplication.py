@@ -36,6 +36,7 @@ class GoApplication(QMainWindow):
         self.setCentralWidget(central_widget)
 
         self.setWindowTitle('Go go go')
+        self.setWindowIcon(QIcon('assets/appIcon.png'))
         self.show()
 
     # For testing purposes only
