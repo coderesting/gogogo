@@ -37,6 +37,17 @@ class Game(QWidget):
         self.player_states = [PlayerState(), PlayerState()]
         self.current_player = 0
 
+    def pass_stone(self):
+        """Passes a stone to the other player. Two consecutive passes ent the game"""
+        self.player_states[self.current_player].consecutive_passes += 1
+        self.player_states[1 - self.current_player].captured_stones += 1
+
+        self.player_state_changed.emit(self.current_player, self.player_states[self.current_player])
+        self.player_state_changed.emit(1 - self.current_player, self.player_states[1 - self.current_player])
+
+        if self.player_states[self.current_player].consecutive_passes == 2:
+            self.set_game_state(GameState.END_TWO_PASSES)
+
     # Todo: implement later due to high complexity
     def calculate_score(self):
         pass
@@ -50,6 +61,7 @@ class Game(QWidget):
         """
         if self.move_is_valid(field):
             self.board_state.set_field_value(field, self.current_player)
+            self.player_states[self.current_player].consecutive_passes = 0
 
             captured_stones = self.remove_captured_stones(self.board_state, 1 - self.current_player)
             self.player_states[self.current_player].captured_stones += captured_stones
