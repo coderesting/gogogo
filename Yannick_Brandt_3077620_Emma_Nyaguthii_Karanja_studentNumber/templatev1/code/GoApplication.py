@@ -1,5 +1,3 @@
-import random
-
 from PyQt5.QtGui import QColor, QIcon
 from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout
 
@@ -22,8 +20,22 @@ class GoApplication(QMainWindow):
                               PlayerWidget('Ellie', QColor('black'), parent=self)]
         self.actionsWidget = ActionsWidget()
 
-        self.boardWidget.clicked_field.connect(self.play_move)
+        self.connect_widgets()
 
+        self.create_layout()
+
+        self.setWindowTitle('Go go go')
+        self.setWindowIcon(QIcon('assets/appIcon.png'))
+        self.show()
+
+    def connect_widgets(self):
+        self.boardWidget.clicked_field.connect(self.game.place_stone)
+        self.game.invalid_move.connect(self.boardWidget.show_invalid_move)
+        self.game.board_state_changed.connect(self.boardWidget.set_state)
+        self.game.player_state_changed.connect(lambda idx, state: self.playerWidgets[idx].set_state(state))
+        self.game.game_state_changed.connect(self.status_widget.set_status)
+
+    def create_layout(self):
         grid_layout = QGridLayout()
         grid_layout.addWidget(self.playerWidgets[0], 0, 0)
         grid_layout.addWidget(self.status_widget, 0, 1)
@@ -34,15 +46,3 @@ class GoApplication(QMainWindow):
         central_widget = QWidget()
         central_widget.setLayout(grid_layout)
         self.setCentralWidget(central_widget)
-
-        self.setWindowTitle('Go go go')
-        self.setWindowIcon(QIcon('assets/appIcon.png'))
-        self.show()
-
-    # For testing purposes only
-    def play_move(self, row: int, col: int):
-        if random.randint(0, 1):
-            self.boardWidget.show_invalid_move(row, col)
-        else:
-            self.boardWidget.state[row][col] = random.randint(1, 2)
-            self.boardWidget.set_state(self.boardWidget.state)
