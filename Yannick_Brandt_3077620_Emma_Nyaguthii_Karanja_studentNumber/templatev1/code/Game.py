@@ -23,8 +23,8 @@ class Game(QWidget):
     invalid_move = pyqtSignal(Field)
 
     board_state: BoardState
-    history: list[BoardState]
-    player_states: list[PlayerState]
+    history = []
+    player_states = []
     current_player: int
 
     def __init__(self):
