@@ -1,5 +1,5 @@
 from PyQt5.QtCore import QRect, pyqtSignal, QPropertyAnimation, QEasingCurve, pyqtProperty, QMargins, Qt
-from PyQt5.QtGui import QResizeEvent, QMouseEvent, QPainter, QPaintEvent, QImage, QPen, QColor
+from PyQt5.QtGui import QResizeEvent, QMouseEvent, QPainter, QPaintEvent, QImage, QPen, QColor, QBrush
 from PyQt5.QtWidgets import QWidget, QSizePolicy
 
 from BoardState import BoardState
@@ -14,6 +14,7 @@ class BoardWidget(QWidget):
     clicked_field = pyqtSignal(Field)
 
     state = BoardState()
+    active: bool = True
     board_rect = QRect()
     board_padding: float
     field_width: float
@@ -70,6 +71,10 @@ class BoardWidget(QWidget):
         self.state = state
         self.update()
 
+    def set_active(self, active):
+        self.active = active
+        self.update()
+
     def show_invalid_move(self, field: Field):
         """ Shows a red cross over a field to indicate an invalid move
         :param field: field to draw the cross over
@@ -84,6 +89,9 @@ class BoardWidget(QWidget):
         self.draw_stones(painter)
         if self.invalid_field:
             self.draw_invalid_field(painter, self.invalid_field)
+        # Draw a slight overlay if the board is not active
+        if not self.active:
+            painter.fillRect(self.board_rect, QBrush(QColor(0, 0, 0, 100)))
 
     def draw_stones(self, painter: QPainter):
         """ Checks every field and draws a white or black stone depending on the board state
