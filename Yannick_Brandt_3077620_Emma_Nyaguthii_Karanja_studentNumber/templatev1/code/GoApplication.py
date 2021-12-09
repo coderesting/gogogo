@@ -4,8 +4,10 @@ from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout, QLabel
 from ActionsWidget import ActionsWidget
 from AnalyzeWidget import AnalyzeWidget
 from BoardWidget import BoardWidget
+from ConfigurationWidget import ConfigurationWidget
 from Game import Game
-from GameState import GameState
+from GameConfiguration import GameConfiguration
+from GameState import GameStatus
 from PlayerWidget import PlayerWidget
 from ResultWidget import ResultWidget
 from StatusWidget import StatusWidget
@@ -18,6 +20,7 @@ class GoApplication(QMainWindow):
 
         self.game = Game()
 
+        self.configuration_widget = ConfigurationWidget()
         self.status_widget = StatusWidget()
         self.boardWidget = BoardWidget()
         self.result_widget = ResultWidget()
@@ -33,27 +36,34 @@ class GoApplication(QMainWindow):
         self.central_widget.setLayout(self.layout)
         self.setCentralWidget(self.central_widget)
 
-        self.game_ended()
+        self.conf = GameConfiguration('Tom', 'Ellie', 0)
+
+        self.configure_game()
 
         self.setWindowTitle('Go go go')
         self.setWindowIcon(QIcon('assets/appIcon.png'))
         self.show()
 
     def connect_widgets(self):
-        self.result_widget.new_game.connect(self.configure_game)
-        self.result_widget.analyze.connect(self.analyze_game)
+        self.configuration_widget.start_game.connect(self.start_new_game)
 
         self.boardWidget.clicked_field.connect(self.game.place_stone)
 
         self.game.invalid_move.connect(self.boardWidget.show_invalid_move)
         self.game.board_state_changed.connect(self.boardWidget.set_state)
         self.game.player_state_changed.connect(lambda idx, state: self.playerWidgets[idx].set_state(state))
-        self.game.game_state_changed.connect(self.game_state_changed)
+        self.game.game_status_changed.connect(self.game_status_changed)
 
-    def game_state_changed(self, state: GameState):
-        if state == GameState.END_RESIGN or state == GameState.END_NO_MOVES or state == GameState.END_TWO_PASSES:
+        self.result_widget.new_game.connect(self.configure_game)
+        self.result_widget.analyze.connect(self.analyze_game)
+
+        self.analyze_widget.show_step.connect(self.game.show_step)
+        self.analyze_widget.new_game.connect(self.configure_game)
+
+    def game_status_changed(self, status: GameStatus):
+        if status == GameStatus.END_RESIGN or status == GameStatus.END_NO_MOVES or status == GameStatus.END_TWO_PASSES:
             self.game_ended()
-        self.status_widget.set_status(state)
+        self.status_widget.set_status(status)
 
     def show_rules(self):
         self.clear_layout()
@@ -61,10 +71,13 @@ class GoApplication(QMainWindow):
 
     def configure_game(self):
         self.clear_layout()
-        self.layout.addWidget(QLabel("Configure"), 0, 0)
+        self.layout.addWidget(self.configuration_widget, 0, 0)
 
-    def start_game(self):
+    def start_new_game(self, conf: GameConfiguration):
         self.clear_layout()
+        self.playerWidgets[0] = PlayerWidget(conf.names[0], QColor('black'))
+        self.playerWidgets[1] = PlayerWidget(conf.names[1], QColor('black'))
+
         self.layout.addWidget(self.playerWidgets[0], 0, 0)
         self.layout.addWidget(self.status_widget, 0, 1)
         self.layout.addWidget(self.playerWidgets[1], 0, 2)
@@ -72,6 +85,7 @@ class GoApplication(QMainWindow):
         self.layout.addWidget(self.actionsWidget, 2, 1)
 
         self.boardWidget.set_active(True)
+        self.game.reset(conf.handicap)
 
     def game_ended(self):
         self.clear_layout()
@@ -92,10 +106,11 @@ class GoApplication(QMainWindow):
         self.layout.addWidget(self.analyze_widget, 2, 1)
 
         self.boardWidget.set_active(True)
+        self.analyze_widget.set_history_steps(len(self.game.history) - 1)
 
     def clear_layout(self):
-        self.layout.removeWidget(self.playerWidgets[0])
-        self.layout.removeWidget(self.status_widget)
-        self.layout.removeWidget(self.playerWidgets[1])
-        self.layout.removeWidget(self.boardWidget)
-        self.layout.removeWidget(self.actionsWidget)
+        widgets = [self.configuration_widget, self.playerWidgets[0], self.playerWidgets[1], self.status_widget,
+                   self.boardWidget, self.actionsWidget, self.analyze_widget, self.result_widget]
+        for widget in widgets:
+            self.layout.removeWidget(widget)
+            widget.setParent(None)
