@@ -7,6 +7,14 @@ class PlayerState:
     def __init__(self):
         self.reset()
 
+    def clone(self):
+        player_state = PlayerState
+        player_state.is_playing = self.is_playing
+        player_state.remaining_time = self.remaining_time
+        player_state.captured_stones = self.captured_stones
+        player_state.consecutive_passes = self.consecutive_passes
+        return player_state
+
     def reset(self):
         self.is_playing = False
         self.remaining_time = 900  # 15min in seconds

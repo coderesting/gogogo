@@ -67,7 +67,7 @@ class BoardWidget(QWidget):
                 self.clicked_field.emit(field)
                 return
 
-    def set_state(self, state):
+    def set_state(self, state: BoardState):
         self.state = state
         self.update()
 
@@ -94,7 +94,7 @@ class BoardWidget(QWidget):
             painter.fillRect(self.board_rect, QBrush(QColor(0, 0, 0, 100)))
 
     def draw_stones(self, painter: QPainter):
-        """ Checks every field and draws a white or black stone depending on the board state
+        """ Checks every field and draws a white or black stone depending on the board status
         :param painter: QPainter to draw on
         """
         for field in self.state:

@@ -18,8 +18,10 @@ class BoardState:
     0 = black stone
     1 = white stone
     """
-    state = [[-1] * 7 for i in range(7)]
-    iterator_field: Field
+
+    def __init__(self):
+        self.state = [[-1] * 7 for i in range(7)]
+        self.iterator_field: Field
 
     def set_field_value(self, field, value):
         self.state[field.row][field.col] = value
