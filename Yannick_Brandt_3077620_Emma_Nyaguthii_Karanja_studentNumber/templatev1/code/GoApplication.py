@@ -57,7 +57,7 @@ class GoApplication(QMainWindow):
         self.result_widget.new_game.connect(self.configure_game)
         self.result_widget.analyze.connect(self.analyze_game)
 
-        self.analyze_widget.show_step.connect(self.game.show_step)
+        self.analyze_widget.show_step.connect(self.game.rewind)
         self.analyze_widget.new_game.connect(self.configure_game)
 
     def game_status_changed(self, status: GameStatus):

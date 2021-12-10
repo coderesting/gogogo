@@ -1,3 +1,5 @@
+import time
+
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QWidget
 
@@ -46,8 +48,8 @@ class Game(QWidget):
 
         self.create_history_entry()
 
-    def show_step(self, step: int):
-        state: GameState = self.history[step]
+    def rewind(self, position: int):
+        state: GameState = self.history[position]
         self.game_status_changed.emit(GameStatus.ANALYSIS)
         self.player_state_changed.emit(0, state.player_states[0])
         self.player_state_changed.emit(1, state.player_states[1])
@@ -64,10 +66,6 @@ class Game(QWidget):
         if self.player_states[self.current_player].consecutive_passes == 2:
             self.set_game_status(GameStatus.END_TWO_PASSES)
 
-    # Todo: implement later due to high complexity
-    def calculate_score(self):
-        pass
-
     def place_stone(self, field):
         """ Tries to place a stone on the board. This method can result in two actions:
         1. The move was valid and the stone is placed
@@ -75,7 +73,9 @@ class Game(QWidget):
 
         :param field: field to put the stone on
         """
+        start = time.time()
         if self.move_is_valid(field):
+
             self.board_state.set_field_value(field, self.current_player)
             self.player_states[self.current_player].consecutive_passes = 0
 
@@ -84,11 +84,17 @@ class Game(QWidget):
 
             self.create_history_entry()
 
+            self.calculate_territories(self.board_state)
             self.set_current_player(1 - self.current_player)
             self.board_state_changed.emit(self.board_state)
+
+            if not self.valid_moves_available():
+                self.set_game_status(GameStatus.END_NO_MOVES)
         else:
             self.invalid_move.emit(field)
-            self.set_game_status(GameStatus.END_TWO_PASSES)
+
+        end = time.time()
+        print(end - start)
 
     def set_current_player(self, current_player: int):
         self.current_player = current_player
@@ -161,14 +167,23 @@ class Game(QWidget):
         :param player_idx: only removes stones from this player
         :returns: number of removed stones
         """
-        captured_stones = 0
+        captured_stones = []
         for field in board_state:
+            if field in captured_stones:
+                continue
             if board_state.get_field_value(field) == player_idx and not self.field_has_liberty(board_state, field):
                 for connected_field in self.get_connected_fields(board_state, field):
                     board_state.set_field_value(connected_field, -1)
-                    captured_stones += 1
+                    captured_stones.append(connected_field)
 
-        return captured_stones
+        return len(captured_stones)
+
+    def valid_moves_available(self):
+        free_fields = self.get_fields_of_type(-1)
+        for field in free_fields:
+            if self.move_is_valid(field):
+                return True
+        return False
 
     def field_has_liberty(self, board_state: BoardState, field: Field):
         for connected_field in self.get_connected_fields(board_state, field):
@@ -190,7 +205,8 @@ class Game(QWidget):
             current_stone = propagation.pop()
             connected_stones.append(current_stone)
             for neighbor in current_stone.neighbors():
-                if neighbor not in connected_stones and board_state.get_field_value(neighbor) == field_value:
+                if neighbor not in connected_stones and neighbor not in propagation and board_state.get_field_value(
+                        neighbor) == field_value:
                     propagation.append(neighbor)
 
         return connected_stones
@@ -200,11 +216,35 @@ class Game(QWidget):
                           self.status)
         self.history.append(entry)
 
-    # Todo: implement later due to high complexity
-    # def get_territories(self, player_idx: int):
-    #     territory_fields = []
-    #     for field in self.board_state:
-    #         field_value = self.board_state.get_field_value(field)
-    #         if field_value == 0:
-    #             connected_fields = self.get_connected_fields(self.board_state, field)
-    #             for connected_field in connected_fields:
+    def calculate_territories(self, board_state: BoardState):
+        territories = [[], []]
+        for field in board_state:
+            if field in territories[0] or field in territories[1]:
+                continue
+            field_value = self.board_state.get_field_value(field)
+            if field_value == -1:
+                connected_fields = self.get_connected_fields(self.board_state, field)
+                territory_of = None
+                try:
+                    for connected_field in connected_fields:
+                        for neighbor in connected_field.neighbors():
+                            neighbor_value = board_state.get_field_value(neighbor)
+                            if neighbor_value == -1:
+                                continue
+                            elif territory_of is None:
+                                territory_of = neighbor_value
+                            elif neighbor_value != territory_of:
+                                raise "No territory"
+                    territories[territory_of] += connected_fields
+                except Exception:
+                    pass
+
+        self.player_states[0].territory = len(territories[0]) + len(self.get_fields_of_type(0))
+        self.player_states[1].territory = len(territories[1]) + len(self.get_fields_of_type(1))
+
+    def get_fields_of_type(self, field_type: int):
+        fields = []
+        for field in self.board_state:
+            if self.board_state.get_field_value(field) == field_type:
+                fields.append(field)
+        return fields
