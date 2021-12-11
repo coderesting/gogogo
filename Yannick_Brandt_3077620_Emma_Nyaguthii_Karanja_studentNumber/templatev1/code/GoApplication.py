@@ -7,7 +7,7 @@ from BoardWidget import BoardWidget
 from ConfigurationWidget import ConfigurationWidget
 from Game import Game
 from GameConfiguration import GameConfiguration
-from GameState import GameStatus
+from GameState import GameStatus, is_end_status
 from PlayerWidget import PlayerWidget
 from ResultWidget import ResultWidget
 from StatusWidget import StatusWidget
@@ -51,7 +51,7 @@ class GoApplication(QMainWindow):
 
         self.game.invalid_move.connect(self.boardWidget.show_invalid_move)
         self.game.board_state_changed.connect(self.boardWidget.set_state)
-        self.game.player_state_changed.connect(lambda idx, state: self.playerWidgets[idx].set_state(state))
+        self.game.player_states_changed.connect(self.player_states_changed)
         self.game.game_status_changed.connect(self.game_status_changed)
 
         self.result_widget.new_game.connect(self.configure_game)
@@ -61,9 +61,13 @@ class GoApplication(QMainWindow):
         self.analyze_widget.new_game.connect(self.configure_game)
 
     def game_status_changed(self, status: GameStatus):
-        if status == GameStatus.END_RESIGN or status == GameStatus.END_NO_MOVES or status == GameStatus.END_TWO_PASSES:
+        if is_end_status(status):
             self.game_ended()
         self.status_widget.set_status(status)
+
+    def player_states_changed(self, states):
+        self.playerWidgets[0].set_state(states[0])
+        self.playerWidgets[1].set_state(states[1])
 
     def show_rules(self):
         self.clear_layout()

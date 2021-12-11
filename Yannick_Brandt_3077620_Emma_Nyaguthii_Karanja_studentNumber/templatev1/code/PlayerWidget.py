@@ -7,10 +7,12 @@ from PlayerState import PlayerState
 class PlayerWidget(QWidget):
     def __init__(self, name: str, color: QColor, parent=None):
         super().__init__(parent)
-        self.label = QLabel("leel")
+        self.label = QLabel()
         layout = QHBoxLayout()
         layout.addWidget(self.label)
         self.setLayout(layout)
 
     def set_state(self, state: PlayerState):
-        self.label.setText("captures:" + str(state.captured_stones) + "\n territory:" + str(state.territory))
+        self.label.setText(
+            "captures:" + str(state.captured_stones) + "\n territory:" + str(
+                state.territory) + "\n time: " + str(state.remaining_time))

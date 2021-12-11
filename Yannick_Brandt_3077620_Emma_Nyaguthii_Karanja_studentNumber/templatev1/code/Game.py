@@ -1,11 +1,11 @@
 import time
 
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal, QTimer
 from PyQt5.QtWidgets import QWidget
 
 from BoardState import BoardState
 from Field import Field
-from GameState import GameState, GameStatus
+from GameState import GameState, GameStatus, is_playing_status
 from PlayerState import PlayerState
 
 
@@ -16,12 +16,12 @@ class Game(QWidget):
 
     signal game_status_changed(gameState:GameState) the status of the game changed
     signal board_state_changed(boardState:BoardState) the status of the board changed
-    signal player_state_changed(playerIdx:int, playerState:PlayerState) the status of one player (0 or 1) changed
+    signal player_states_changed(playerStates:PlayerState[]) the status of at least one player changed
     signal invalid_move(field:Field) the last played move was invalid
     """
     game_status_changed = pyqtSignal(GameStatus)
     board_state_changed = pyqtSignal(BoardState)
-    player_state_changed = pyqtSignal(int, object)
+    player_states_changed = pyqtSignal(list)
     invalid_move = pyqtSignal(Field)
 
     def __init__(self):
@@ -33,6 +33,19 @@ class Game(QWidget):
         self.status = None
         self.current_player = 0
 
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_timer)
+        self.timer.setInterval(1000)
+        self.timer.start()
+
+    def update_timer(self):
+        if self.status == GameStatus.TURN_PLAYER_0 or self.status == GameStatus.TURN_PLAYER_1:
+            if self.player_states[self.current_player].remaining_time > 0:
+                self.player_states[self.current_player].remaining_time -= 1
+            else:
+                self.set_game_status(GameStatus.END_TIMEOUT)
+            self.player_states_changed.emit(self.player_states)
+
     def reset(self, handicap: float):
         self.board_state = BoardState()
         self.history = []
@@ -41,8 +54,7 @@ class Game(QWidget):
 
         self.set_game_status(GameStatus.TURN_PLAYER_0)
         self.board_state_changed.emit(self.board_state)
-        self.player_state_changed.emit(0, self.player_states[0])
-        self.player_state_changed.emit(1, self.player_states[1])
+        self.player_states_changed.emit(self.player_states)
 
         self.current_player = 0
 
@@ -51,8 +63,7 @@ class Game(QWidget):
     def rewind(self, position: int):
         state: GameState = self.history[position]
         self.game_status_changed.emit(GameStatus.ANALYSIS)
-        self.player_state_changed.emit(0, state.player_states[0])
-        self.player_state_changed.emit(1, state.player_states[1])
+        self.player_states_changed.emit(self.player_states)
         self.board_state_changed.emit(state.board_state)
 
     def pass_stone(self):
@@ -60,8 +71,7 @@ class Game(QWidget):
         self.player_states[self.current_player].consecutive_passes += 1
         self.player_states[1 - self.current_player].captured_stones += 1
 
-        self.player_state_changed.emit(0, self.player_states[0])
-        self.player_state_changed.emit(1, self.player_states[1])
+        self.player_states_changed.emit(self.player_states)
 
         if self.player_states[self.current_player].consecutive_passes == 2:
             self.set_game_status(GameStatus.END_TWO_PASSES)
@@ -73,6 +83,8 @@ class Game(QWidget):
 
         :param field: field to put the stone on
         """
+        if not is_playing_status(self.status):
+            return
         start = time.time()
         if self.move_is_valid(field):
 
@@ -101,8 +113,7 @@ class Game(QWidget):
         self.player_states[1 - self.current_player].is_playing = False
         self.player_states[self.current_player].is_playing = True
 
-        self.player_state_changed.emit(0, self.player_states[0])
-        self.player_state_changed.emit(1, self.player_states[1])
+        self.player_states_changed.emit(self.player_states)
 
         if current_player == 0:
             self.set_game_status(GameStatus.TURN_PLAYER_0)
@@ -123,17 +134,14 @@ class Game(QWidget):
         """
         # Check Free field
         if not self.board_state.get_field_value(field) == -1:
-            self.set_game_status(GameStatus.INVALID_MOVE_OCCUPIED)
             return False
 
         # Check ko
         if self.check_ko(field):
-            self.set_game_status(GameStatus.INVALID_MOVE_KO)
             return False
 
         # Check suicide
         if self.check_suicide(field):
-            self.set_game_status(GameStatus.INVALID_MOVE_SUICIDE)
             return False
 
         return True
