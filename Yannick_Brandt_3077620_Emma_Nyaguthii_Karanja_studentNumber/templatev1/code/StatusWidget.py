@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QWidget
 
-from GameState import GameStatus
+from game.GameState import GameStatus
 
 
 class StatusWidget(QWidget):

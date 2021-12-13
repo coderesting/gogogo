@@ -1,6 +1,6 @@
 import copy
 
-from Field import Field
+from board.Field import Field
 
 
 class BoardState:

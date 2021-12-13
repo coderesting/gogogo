@@ -1,6 +1,6 @@
 from enum import Enum
 
-from BoardState import BoardState
+from board.BoardState import BoardState
 
 
 def is_end_status(status):

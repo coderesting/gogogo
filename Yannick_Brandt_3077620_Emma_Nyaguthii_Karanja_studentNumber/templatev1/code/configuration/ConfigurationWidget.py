@@ -1,8 +1,8 @@
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QGridLayout, QPushButton
 
-from GameConfiguration import GameConfiguration
-from HandicapInput import HandicapInput
+from configuration.GameConfiguration import GameConfiguration
+from configuration.HandicapInput import HandicapInput
 
 
 class ConfigurationWidget(QWidget):
@@ -12,6 +12,7 @@ class ConfigurationWidget(QWidget):
         super().__init__(parent)
 
         welcome_label = QLabel("Welcome to GoGoGo")
+        welcome_label.setStyleSheet("font-size: 20px")
         welcome_label.setAlignment(Qt.AlignCenter)
 
         player_1_label = QLabel("Player 1 (black)")

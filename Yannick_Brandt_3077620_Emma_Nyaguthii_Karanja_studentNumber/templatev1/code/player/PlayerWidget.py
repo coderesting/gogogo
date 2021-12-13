@@ -1,7 +1,7 @@
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QWidget, QLabel, QHBoxLayout
 
-from PlayerState import PlayerState
+from player.PlayerState import PlayerState
 
 
 class PlayerWidget(QWidget):

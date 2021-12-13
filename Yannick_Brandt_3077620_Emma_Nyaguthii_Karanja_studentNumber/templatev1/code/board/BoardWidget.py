@@ -2,8 +2,8 @@ from PyQt5.QtCore import QRect, pyqtSignal, QPropertyAnimation, QEasingCurve, py
 from PyQt5.QtGui import QResizeEvent, QMouseEvent, QPainter, QPaintEvent, QImage, QPen, QColor, QBrush
 from PyQt5.QtWidgets import QWidget, QSizePolicy
 
-from BoardState import BoardState
-from Field import Field
+from board.BoardState import BoardState
+from board.Field import Field
 
 
 class BoardWidget(QWidget):
@@ -85,7 +85,7 @@ class BoardWidget(QWidget):
 
     def paintEvent(self, event: QPaintEvent):
         painter = QPainter(self)
-        painter.drawImage(self.board_rect, QImage('assets/board.png'))
+        painter.drawImage(self.board_rect, QImage('../assets/board.png'))
         self.draw_stones(painter)
         if self.invalid_field:
             self.draw_invalid_field(painter, self.invalid_field)
@@ -99,9 +99,9 @@ class BoardWidget(QWidget):
         """
         for field in self.state:
             if self.state.get_field_value(field) == 0:
-                self.draw_stone(painter, field, QImage('assets/blackStone.png'))
+                self.draw_stone(painter, field, QImage('../assets/blackStone.png'))
             elif self.state.get_field_value(field) == 1:
-                self.draw_stone(painter, field, QImage('assets/whiteStone.png'))
+                self.draw_stone(painter, field, QImage('../assets/whiteStone.png'))
 
     def draw_stone(self, painter: QPainter, field: Field, image: QImage):
         """ Draws a stone image in the specified position

@@ -3,10 +3,10 @@ import time
 from PyQt5.QtCore import pyqtSignal, QTimer
 from PyQt5.QtWidgets import QWidget
 
-from BoardState import BoardState
-from Field import Field
-from GameState import GameState, GameStatus, is_playing_status
-from PlayerState import PlayerState
+from board.BoardState import BoardState
+from board.Field import Field
+from game.GameState import GameState, GameStatus, is_playing_status
+from player.PlayerState import PlayerState
 
 
 class Game(QWidget):

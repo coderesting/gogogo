@@ -3,14 +3,14 @@ from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout, QLabel
 
 from ActionsWidget import ActionsWidget
 from AnalyzeWidget import AnalyzeWidget
-from BoardWidget import BoardWidget
-from ConfigurationWidget import ConfigurationWidget
-from Game import Game
-from GameConfiguration import GameConfiguration
-from GameState import GameStatus, is_end_status
-from PlayerWidget import PlayerWidget
 from ResultWidget import ResultWidget
 from StatusWidget import StatusWidget
+from board.BoardWidget import BoardWidget
+from configuration.ConfigurationWidget import ConfigurationWidget
+from configuration.GameConfiguration import GameConfiguration
+from game.Game import Game
+from game.GameState import GameStatus, is_end_status
+from player.PlayerWidget import PlayerWidget
 
 
 class GoApplication(QMainWindow):
@@ -24,10 +24,11 @@ class GoApplication(QMainWindow):
         self.status_widget = StatusWidget()
         self.boardWidget = BoardWidget()
         self.result_widget = ResultWidget()
-        self.playerWidgets = [PlayerWidget('Tom', QColor('white'), parent=self),
-                              PlayerWidget('Ellie', QColor('black'), parent=self)]
+        self.playerWidgets = [PlayerWidget('', QColor('white'), parent=self),
+                              PlayerWidget('', QColor('black'), parent=self)]
         self.actionsWidget = ActionsWidget()
         self.analyze_widget = AnalyzeWidget()
+        self.placeholder_widget = QWidget()
 
         self.connect_widgets()
 
@@ -117,4 +118,4 @@ class GoApplication(QMainWindow):
                    self.boardWidget, self.actionsWidget, self.analyze_widget, self.result_widget]
         for widget in widgets:
             self.layout.removeWidget(widget)
-            widget.setParent(None)
+            widget.setParent(self.placeholder_widget)
