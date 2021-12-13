@@ -39,6 +39,7 @@ class Game(QWidget):
         self.timer.start()
 
     def update_timer(self):
+        """ Count down the timer of the current player and end the game if the time of one player reaches 0"""
         if self.status == GameStatus.TURN_PLAYER_0 or self.status == GameStatus.TURN_PLAYER_1:
             if self.player_states[self.current_player].remaining_time > 0:
                 self.player_states[self.current_player].remaining_time -= 1
@@ -61,9 +62,13 @@ class Game(QWidget):
         self.create_history_entry()
 
     def rewind(self, position: int):
+        """ Rewind the GameState to a specific position in history.
+
+        :position: rewind the game to this position (0 - num_game_steps)
+        """
         state: GameState = self.history[position]
         self.game_status_changed.emit(GameStatus.ANALYSIS)
-        self.player_states_changed.emit(self.player_states)
+        self.player_states_changed.emit(state.player_states)
         self.board_state_changed.emit(state.board_state)
 
     def pass_stone(self):
@@ -114,11 +119,7 @@ class Game(QWidget):
         self.player_states[self.current_player].is_playing = True
 
         self.player_states_changed.emit(self.player_states)
-
-        if current_player == 0:
-            self.set_game_status(GameStatus.TURN_PLAYER_0)
-        else:
-            self.set_game_status(GameStatus.TURN_PLAYER_1)
+        self.set_game_status(GameStatus.TURN_PLAYER_0 if current_player == 0 else GameStatus.TURN_PLAYER_1)
 
     def set_game_status(self, new_status: GameStatus):
         self.status = new_status
@@ -132,7 +133,7 @@ class Game(QWidget):
 
         :param field: field to check
         """
-        # Check Free field
+        # Check if the field is free
         if not self.board_state.get_field_value(field) == -1:
             return False
 
@@ -187,6 +188,7 @@ class Game(QWidget):
         return len(captured_stones)
 
     def valid_moves_available(self):
+        """ Checks if valid moves are available for the current BoardState and player"""
         free_fields = self.get_fields_of_type(-1)
         for field in free_fields:
             if self.move_is_valid(field):
@@ -194,6 +196,11 @@ class Game(QWidget):
         return False
 
     def field_has_liberty(self, board_state: BoardState, field: Field):
+        """ Calculates if a field has at least one liberty
+
+        :board_state: the BoardState to do the calculation on
+        :field: the field to check the liberty for
+        """
         for connected_field in self.get_connected_fields(board_state, field):
             for neighbor in connected_field.neighbors():
                 if neighbor != field and board_state.get_field_value(neighbor) == -1:
@@ -201,11 +208,13 @@ class Game(QWidget):
         return False
 
     def get_connected_fields(self, board_state: BoardState, field: Field):
-        """ Returns all connected fields with the same value as the given field. The original field is also included
+        """ Returns all connected fields with the same value as the given field. The original field is also included.
 
         :param board_state: BoardState to search in
         :param field: field find connected fields for
         """
+
+        # Flood fill algorithm
         field_value = board_state.get_field_value(field)
         connected_stones = []
         propagation = [field]
@@ -220,20 +229,34 @@ class Game(QWidget):
         return connected_stones
 
     def create_history_entry(self):
+        """Creates and stores a snapshot of the current GameState in the history"""
         entry = GameState(self.board_state.clone(), [self.player_states[0].clone(), self.player_states[1].clone()],
                           self.status)
         self.history.append(entry)
 
     def calculate_territories(self, board_state: BoardState):
+        """ Calculates and updates the territories of both players
+        The algorithm is a simplified version of the physical go algorithm.
+        It counts stones on the field and empty fields that are surrounded by one player.
+        Note: dead stones are not removed from the board before counting since
+        1. There is no algorithm that works 100% of the time
+        2. A decent algorithm is pretty complex and not the main focus of this project
+
+        :board_state: The state to calculate territories on
+        """
         territories = [[], []]
         for field in board_state:
+            # Skip already identified territory
             if field in territories[0] or field in territories[1]:
                 continue
-            field_value = self.board_state.get_field_value(field)
-            if field_value == -1:
+            field_owner = self.board_state.get_field_value(field)
+            # -1 == free field
+            if field_owner == -1:
                 connected_fields = self.get_connected_fields(self.board_state, field)
-                territory_of = None
                 try:
+                    territory_of = None
+                    # Add connected fields to a player's territory if all neighbors of the fields are free
+                    # or belong to the same player
                     for connected_field in connected_fields:
                         for neighbor in connected_field.neighbors():
                             neighbor_value = board_state.get_field_value(neighbor)
@@ -245,12 +268,23 @@ class Game(QWidget):
                                 raise "No territory"
                     territories[territory_of] += connected_fields
                 except Exception:
-                    pass
+                    continue
 
-        self.player_states[0].territory = len(territories[0]) + len(self.get_fields_of_type(0))
-        self.player_states[1].territory = len(territories[1]) + len(self.get_fields_of_type(1))
+        for i in [0, 1]:
+            # If there is only one stone on the field all remaining free fields would count as that players' territory
+            # This should not be true and the territory needs to be set to zero
+            if len(territories[i]) == 48:
+                territories[i] = []
+            self.player_states[i].territory = len(territories[i]) + len(self.get_fields_of_type(i))
 
     def get_fields_of_type(self, field_type: int):
+        """ Returns all fields of one type
+
+        :field_type: the field type to find fields for
+        -1: No field owner
+        0: owned by player 0
+        1: owned by player 1
+        """
         fields = []
         for field in self.board_state:
             if self.board_state.get_field_value(field) == field_type:

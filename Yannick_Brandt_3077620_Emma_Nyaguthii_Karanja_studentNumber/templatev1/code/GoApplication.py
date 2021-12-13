@@ -36,7 +36,7 @@ class GoApplication(QMainWindow):
         self.central_widget.setLayout(self.layout)
         self.setCentralWidget(self.central_widget)
 
-        self.conf = GameConfiguration('Tom', 'Ellie', 0)
+        self.conf = None
 
         self.configure_game()
 

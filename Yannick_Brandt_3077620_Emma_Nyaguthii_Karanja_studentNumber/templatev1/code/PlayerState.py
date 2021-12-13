@@ -9,7 +9,7 @@ class PlayerState:
         self.reset()
 
     def clone(self):
-        player_state = PlayerState
+        player_state = PlayerState()
         player_state.is_playing = self.is_playing
         player_state.remaining_time = self.remaining_time
         player_state.captured_stones = self.captured_stones
