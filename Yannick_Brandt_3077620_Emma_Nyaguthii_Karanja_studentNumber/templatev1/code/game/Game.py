@@ -78,6 +78,7 @@ class Game(QWidget):
         """Passes a stone to the other player. Two consecutive passes ent the game"""
         self.player_states[self.current_player].consecutive_passes += 1
         self.player_states[1 - self.current_player].captured_stones += 1
+        self.set_current_player(1 - self.current_player)
 
         self.player_states_changed.emit(self.player_states)
 
