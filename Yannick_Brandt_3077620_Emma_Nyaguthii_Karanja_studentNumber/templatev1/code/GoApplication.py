@@ -1,5 +1,5 @@
 from PyQt5.QtGui import QColor, QIcon
-from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout, QLabel
+from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout
 
 from ActionsWidget import ActionsWidget
 from AnalyzeWidget import AnalyzeWidget
@@ -11,6 +11,7 @@ from configuration.GameConfiguration import GameConfiguration
 from game.Game import Game
 from game.GameState import GameStatus, is_end_status
 from player.PlayerWidget import PlayerWidget
+from tutorial.TutorialWindow import TutorialWindow
 
 
 class GoApplication(QMainWindow):
@@ -30,6 +31,8 @@ class GoApplication(QMainWindow):
         self.analyze_widget = AnalyzeWidget()
         self.placeholder_widget = QWidget()
 
+        self.tutorial_window = TutorialWindow(parent=self)
+
         self.connect_widgets()
 
         self.central_widget = QWidget()
@@ -42,11 +45,12 @@ class GoApplication(QMainWindow):
         self.configure_game()
 
         self.setWindowTitle('Go go go')
-        self.setWindowIcon(QIcon('assets/appIcon.png'))
+        self.setWindowIcon(QIcon('icons/app.png'))
         self.show()
 
     def connect_widgets(self):
         self.configuration_widget.start_game.connect(self.start_new_game)
+        self.configuration_widget.show_tutorial.connect(self.show_tutorial)
 
         self.boardWidget.clicked_field.connect(self.game.place_stone)
 
@@ -70,10 +74,6 @@ class GoApplication(QMainWindow):
         self.playerWidgets[0].set_state(states[0])
         self.playerWidgets[1].set_state(states[1])
 
-    def show_rules(self):
-        self.clear_layout()
-        self.layout.addWidget(QLabel("Rules"))
-
     def configure_game(self):
         self.clear_layout()
         self.layout.addWidget(self.configuration_widget, 0, 0)
@@ -81,7 +81,7 @@ class GoApplication(QMainWindow):
     def start_new_game(self, conf: GameConfiguration):
         self.clear_layout()
         self.playerWidgets[0] = PlayerWidget(conf.names[0], QColor('black'))
-        self.playerWidgets[1] = PlayerWidget(conf.names[1], QColor('black'))
+        self.playerWidgets[1] = PlayerWidget(conf.names[1], QColor('white'))
 
         self.layout.addWidget(self.playerWidgets[0], 0, 0)
         self.layout.addWidget(self.status_widget, 0, 1)
@@ -119,3 +119,7 @@ class GoApplication(QMainWindow):
         for widget in widgets:
             self.layout.removeWidget(widget)
             widget.setParent(self.placeholder_widget)
+
+    def show_tutorial(self):
+        self.tutorial_window.reset()
+        self.tutorial_window.show()

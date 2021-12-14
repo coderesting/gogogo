@@ -85,7 +85,7 @@ class BoardWidget(QWidget):
 
     def paintEvent(self, event: QPaintEvent):
         painter = QPainter(self)
-        painter.drawImage(self.board_rect, QImage('../assets/board.png'))
+        painter.drawImage(self.board_rect, QImage('icons/board.png'))
         self.draw_stones(painter)
         if self.invalid_field:
             self.draw_invalid_field(painter, self.invalid_field)
@@ -99,9 +99,9 @@ class BoardWidget(QWidget):
         """
         for field in self.state:
             if self.state.get_field_value(field) == 0:
-                self.draw_stone(painter, field, QImage('../assets/blackStone.png'))
+                self.draw_stone(painter, field, QImage('icons/blackStone.png'))
             elif self.state.get_field_value(field) == 1:
-                self.draw_stone(painter, field, QImage('../assets/whiteStone.png'))
+                self.draw_stone(painter, field, QImage('icons/whiteStone.png'))
 
     def draw_stone(self, painter: QPainter, field: Field, image: QImage):
         """ Draws a stone image in the specified position
