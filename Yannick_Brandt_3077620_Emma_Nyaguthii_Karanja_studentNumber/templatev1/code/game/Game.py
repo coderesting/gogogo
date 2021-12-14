@@ -47,11 +47,14 @@ class Game(QWidget):
                 self.set_game_status(GameStatus.END_TIMEOUT)
             self.player_states_changed.emit(self.player_states)
 
-    def reset(self, handicap: float):
+    def new_game(self, handicap: float):
+        self.reset()
+        self.player_states[1].captured_stones += handicap
+
+    def reset(self):
         self.board_state = BoardState()
         self.history = []
         self.player_states = [PlayerState(), PlayerState()]
-        self.player_states[1].captured_stones += handicap
 
         self.set_game_status(GameStatus.TURN_PLAYER_0)
         self.board_state_changed.emit(self.board_state)
