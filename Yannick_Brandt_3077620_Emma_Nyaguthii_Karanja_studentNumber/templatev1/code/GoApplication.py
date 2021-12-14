@@ -90,7 +90,7 @@ class GoApplication(QMainWindow):
         self.layout.addWidget(self.actionsWidget, 2, 1)
 
         self.boardWidget.set_active(True)
-        self.game.reset(conf.handicap)
+        self.game.new_game(conf.handicap)
 
     def game_ended(self):
         self.clear_layout()
