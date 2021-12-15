@@ -58,6 +58,8 @@ class GoApplication(QMainWindow):
         self.game.board_state_changed.connect(self.boardWidget.set_state)
         self.game.player_states_changed.connect(self.player_states_changed)
         self.game.game_status_changed.connect(self.game_status_changed)
+        self.actionsWidget.reset.connect(self.game.reset)
+        self.actionsWidget.pass_stone.connect(self.game.pass_stone)
 
         self.result_widget.new_game.connect(self.configure_game)
         self.result_widget.analyze.connect(self.analyze_game)
