@@ -1,10 +1,8 @@
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QWidget, QButtonGroup, QHBoxLayout, QPushButton
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QWidget, QButtonGroup, QHBoxLayout, QPushButton, QLabel, QVBoxLayout
 
 
 class HandicapInput(QWidget):
-    change = pyqtSignal(object)
-
     def __init__(self):
         super().__init__()
 
@@ -32,19 +30,21 @@ class HandicapInput(QWidget):
         plus_7_5_button.setCheckable(True)
         self.handicap_group.addButton(plus_7_5_button)
 
-        # Forward the change event
-        self.handicap_group.buttonToggled.connect(self.change.emit)
+        buttons_layout = QHBoxLayout()
+        buttons_layout.addWidget(no_button)
+        buttons_layout.addWidget(plus6_5_button)
+        buttons_layout.addWidget(plus_7_5_button)
 
-        h_box = QHBoxLayout()
-        h_box.addWidget(no_button)
-        h_box.addWidget(plus6_5_button)
-        h_box.addWidget(plus_7_5_button)
-        self.setLayout(h_box)
+        handicap_label = QLabel("Handicap (extra points for white)")
+        handicap_label.setAlignment(Qt.AlignCenter)
+        handicap_label.setStyleSheet('font-size:13px')
+
+        handicap_layout = QVBoxLayout()
+        handicap_layout.setSpacing(10)
+        handicap_layout.addWidget(handicap_label)
+        handicap_layout.addLayout(buttons_layout)
+        handicap_layout.setContentsMargins(5, 0, 5, 20)
+        self.setLayout(handicap_layout)
 
     def get_handicap(self):
         return self.handicap_group.checkedButton().data
-
-    def set_handicap(self, handicap):
-        for button in self.handicap_group.buttons():
-            if button.data == handicap:
-                button.setChecked(True)

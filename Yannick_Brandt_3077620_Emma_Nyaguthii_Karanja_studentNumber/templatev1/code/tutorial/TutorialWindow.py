@@ -79,6 +79,9 @@ class TutorialWindow(QDialog):
         if step.description:
             self.description.setText(step.description)
         self.board.set_state(step.board_state)
+
+        self.board.highlight_fields([step.field_to_click] if step.field_to_click else None)
+
         self.next_button.setDisabled(step.field_to_click is not None)
         if self.current_step == len(self.steps) - 1:
             self.next_button.setText("Finish Tutorial")

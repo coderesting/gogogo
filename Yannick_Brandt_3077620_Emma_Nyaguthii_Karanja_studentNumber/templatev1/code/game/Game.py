@@ -1,11 +1,9 @@
-import time
-
 from PyQt5.QtCore import pyqtSignal, QTimer
 from PyQt5.QtWidgets import QWidget
 
 from board.BoardState import BoardState
 from board.Field import Field
-from game.GameState import GameState, GameStatus, is_playing_status
+from game.GameState import GameState, GameStatus, is_playing_status, is_end_status, WinnerStatus
 from player.PlayerState import PlayerState
 
 
@@ -47,7 +45,7 @@ class Game(QWidget):
                 self.set_game_status(GameStatus.END_TIMEOUT)
             self.player_states_changed.emit(self.player_states)
 
-    def new_game(self, handicap: float):
+    def start_new_game(self, handicap: float):
         self.reset()
         self.player_states[1].captured_stones += handicap
 
@@ -78,11 +76,10 @@ class Game(QWidget):
         """Passes a stone to the other player. Two consecutive passes ent the game"""
         self.player_states[self.current_player].consecutive_passes += 1
         self.player_states[1 - self.current_player].captured_stones += 1
+
         self.set_current_player(1 - self.current_player)
-
-        self.player_states_changed.emit(self.player_states)
-
-        if self.player_states[self.current_player].consecutive_passes == 2:
+        
+        if self.player_states[1 - self.current_player].consecutive_passes == 2:
             self.set_game_status(GameStatus.END_TWO_PASSES)
 
     def place_stone(self, field):
@@ -94,7 +91,6 @@ class Game(QWidget):
         """
         if not is_playing_status(self.status):
             return
-        start = time.time()
         if self.move_is_valid(field):
 
             self.board_state.set_field_value(field, self.current_player)
@@ -113,9 +109,6 @@ class Game(QWidget):
                 self.set_game_status(GameStatus.END_NO_MOVES)
         else:
             self.invalid_move.emit(field)
-
-        end = time.time()
-        print(end - start)
 
     def set_current_player(self, current_player: int):
         self.current_player = current_player
@@ -294,3 +287,16 @@ class Game(QWidget):
             if self.board_state.get_field_value(field) == field_type:
                 fields.append(field)
         return fields
+
+    def get_winner_status(self):
+        if not is_end_status(self.status):
+            return WinnerStatus.NONE
+
+        player0_score = self.player_states[0].captured_stones + self.player_states[0].territory
+        player1_score = self.player_states[1].captured_stones + self.player_states[1].territory
+        if player0_score > player1_score:
+            return WinnerStatus.PLAYER_0
+        elif player1_score > player0_score:
+            return WinnerStatus.PLAYER_1
+        else:
+            return WinnerStatus.DRAW
