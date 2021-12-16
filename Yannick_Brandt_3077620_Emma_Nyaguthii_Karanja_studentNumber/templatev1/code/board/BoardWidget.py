@@ -1,5 +1,6 @@
-from PyQt5.QtCore import QRect, pyqtSignal, QPropertyAnimation, QEasingCurve, pyqtProperty, QMargins, Qt
-from PyQt5.QtGui import QResizeEvent, QMouseEvent, QPainter, QPaintEvent, QImage, QPen, QColor, QBrush
+from PyQt5.QtCore import pyqtSignal, QPropertyAnimation, QEasingCurve, pyqtProperty, Qt, QRectF, \
+    QMarginsF
+from PyQt5.QtGui import QResizeEvent, QMouseEvent, QPainter, QPaintEvent, QImage, QPen, QColor, QPainterPath, QBrush
 from PyQt5.QtWidgets import QWidget, QSizePolicy
 
 from board.BoardState import BoardState
@@ -15,11 +16,12 @@ class BoardWidget(QWidget):
 
     state = BoardState()
     active: bool = True
-    board_rect = QRect()
+    board_rect = QRectF()
     board_padding: float
     field_width: float
     field_padding: float
     invalid_field = None
+    highlighted_fields = None
     _invalid_field_state = 0
 
     def __init__(self, parent=None):
@@ -54,7 +56,7 @@ class BoardWidget(QWidget):
         else:
             board_y = self.height() / 2 - board_length / 2
 
-        self.board_rect = QRect(board_x, board_y, board_length, board_length)
+        self.board_rect = QRectF(board_x, board_y, board_length, board_length)
 
         self.board_padding = board_length / 60
         self.field_padding = board_length / 60
@@ -71,8 +73,8 @@ class BoardWidget(QWidget):
         self.state = state
         self.update()
 
-    def set_active(self, active):
-        self.active = active
+    def highlight_fields(self, fields):
+        self.highlighted_fields = fields
         self.update()
 
     def show_invalid_move(self, field: Field):
@@ -90,8 +92,8 @@ class BoardWidget(QWidget):
         if self.invalid_field:
             self.draw_invalid_field(painter, self.invalid_field)
         # Draw a slight overlay if the board is not active
-        if not self.active:
-            painter.fillRect(self.board_rect, QBrush(QColor(0, 0, 0, 100)))
+        if self.highlighted_fields is not None:
+            self.draw_highlighted_fields(painter)
 
     def draw_stones(self, painter: QPainter):
         """ Checks every field and draws a white or black stone depending on the board status
@@ -111,23 +113,23 @@ class BoardWidget(QWidget):
         """
         field_rect = self.get_field_rect(field)
         # create margins with same space (field_padding) in all directions
-        field_margins = QMargins() + self.field_padding
+        field_margins = QMarginsF() + self.field_padding
         painter.drawImage(field_rect - field_margins, image)
 
-    def get_field_rect(self, field: Field) -> QRect:
+    def get_field_rect(self, field: Field) -> QRectF:
         """ Calculates a QRect for a given board position
         :param field: field to calculate rect for
         """
         x = self.board_rect.x() + self.board_padding + field.col * self.field_width
         y = self.board_rect.y() + self.board_padding + field.row * self.field_width
-        return QRect(x, y, self.field_width, self.field_width)
+        return QRectF(x, y, self.field_width, self.field_width)
 
     def draw_invalid_field(self, painter: QPainter, field: Field):
         """ Draws a red cross over a field to indicate an invalid move
         :param painter: QPainter to draw on
         :param field: field to draw the cross over
         """
-        field_margins = QMargins() + self.field_padding
+        field_margins = QMarginsF() + self.field_padding
         field_rect = self.get_field_rect(field) - field_margins
         # transform the invalidFieldState (0-100) to opacity values (0-255-0)
         opacity = (-51 / 500) * pow(self._invalid_field_state, 2) + (51 / 5) * self._invalid_field_state
@@ -136,3 +138,14 @@ class BoardWidget(QWidget):
         painter.setPen(pen)
         painter.drawLine(field_rect.topLeft(), field_rect.bottomRight())
         painter.drawLine(field_rect.topRight(), field_rect.bottomLeft())
+
+    def draw_highlighted_fields(self, painter: QPainter):
+        """Hightlights a number of fields by drawing an ellipse around them
+
+        :painter: QPainter to draw on
+        """
+        mask = QPainterPath()
+        mask.addRect(self.board_rect)
+        for field in self.highlighted_fields:
+            mask.addEllipse(self.get_field_rect(field))
+        painter.fillPath(mask, QBrush(QColor(0, 0, 0, 70)))

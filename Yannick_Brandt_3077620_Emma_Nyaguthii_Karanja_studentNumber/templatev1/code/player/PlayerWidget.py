@@ -1,12 +1,14 @@
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QWidget, QLabel, QHBoxLayout, QGridLayout
 from time import strftime, gmtime
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QWidget, QLabel, QHBoxLayout
 
 from player.PlayerState import PlayerState
 
 
 class PlayerWidget(QWidget):
-    def __init__(self, name: str, color: QColor, parent=None):
+    def __init__(self, name: str, stone: QPixmap, parent=None):
         super().__init__(parent)
         self.captures = QLabel()
         self.time = QLabel()

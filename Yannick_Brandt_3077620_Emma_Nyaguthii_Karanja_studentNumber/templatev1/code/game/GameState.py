@@ -11,6 +11,13 @@ def is_playing_status(status):
     return status == GameStatus.TURN_PLAYER_0 or status == GameStatus.TURN_PLAYER_1
 
 
+class WinnerStatus(Enum):
+    NONE = -1
+    PLAYER_0 = 0
+    PLAYER_1 = 1
+    DRAW = 2
+
+
 class GameStatus(Enum):
     END_TWO_PASSES = 0
     END_RESIGN = 1

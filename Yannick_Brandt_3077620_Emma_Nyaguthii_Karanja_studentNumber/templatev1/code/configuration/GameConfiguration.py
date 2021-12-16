@@ -2,6 +2,6 @@ class GameConfiguration:
     names = []
     handicap: float
 
-    def __init__(self, name1, name2, handicap):
-        self.names = [name1, name2]
+    def __init__(self, names, handicap):
+        self.names = names
         self.handicap = handicap

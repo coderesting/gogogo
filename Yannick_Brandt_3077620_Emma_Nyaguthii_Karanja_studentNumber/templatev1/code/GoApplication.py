@@ -1,4 +1,4 @@
-from PyQt5.QtGui import QColor, QIcon
+from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout
 
 from ActionsWidget import ActionsWidget
@@ -22,11 +22,11 @@ class GoApplication(QMainWindow):
         self.game = Game()
 
         self.configuration_widget = ConfigurationWidget()
-        self.status_widget = StatusWidget()
+        self.status_widget = StatusWidget(['', ''])
         self.boardWidget = BoardWidget()
         self.result_widget = ResultWidget()
-        self.playerWidgets = [PlayerWidget('', QColor('white'), parent=self),
-                              PlayerWidget('', QColor('black'), parent=self)]
+        self.playerWidgets = [PlayerWidget('', QPixmap('icons/blackStone.png'), parent=self),
+                              PlayerWidget('', QPixmap('icons/whiteStone.png'), parent=self)]
         self.actionsWidget = ActionsWidget()
         self.analyze_widget = AnalyzeWidget()
         self.placeholder_widget = QWidget()
@@ -44,7 +44,7 @@ class GoApplication(QMainWindow):
 
         self.configure_game()
 
-        self.setWindowTitle('Go go go')
+        self.setWindowTitle('GoGoGo')
         self.setWindowIcon(QIcon('icons/app.png'))
         self.show()
 
@@ -70,7 +70,7 @@ class GoApplication(QMainWindow):
     def game_status_changed(self, status: GameStatus):
         if is_end_status(status):
             self.game_ended()
-        self.status_widget.set_status(status)
+        self.status_widget.set_status(status, self.game.get_winner_status())
 
     def player_states_changed(self, states):
         self.playerWidgets[0].set_state(states[0])
@@ -82,8 +82,9 @@ class GoApplication(QMainWindow):
 
     def start_new_game(self, conf: GameConfiguration):
         self.clear_layout()
-        self.playerWidgets[0] = PlayerWidget(conf.names[0], QColor('black'))
-        self.playerWidgets[1] = PlayerWidget(conf.names[1], QColor('white'))
+        self.playerWidgets[0] = PlayerWidget(conf.names[0], QPixmap('icons/blackStone.png'))
+        self.playerWidgets[1] = PlayerWidget(conf.names[1], QPixmap('icons/blackStone.png'))
+        self.status_widget = StatusWidget(conf.names)
 
         self.layout.addWidget(self.playerWidgets[0], 0, 0)
         self.layout.addWidget(self.status_widget, 0, 1)
@@ -91,8 +92,8 @@ class GoApplication(QMainWindow):
         self.layout.addWidget(self.boardWidget, 1, 1)
         self.layout.addWidget(self.actionsWidget, 2, 1)
 
-        self.boardWidget.set_active(True)
-        self.game.new_game(conf.handicap)
+        self.boardWidget.highlight_fields(None)
+        self.game.start_new_game(conf.handicap)
 
     def game_ended(self):
         self.clear_layout()
@@ -102,7 +103,7 @@ class GoApplication(QMainWindow):
         self.layout.addWidget(self.boardWidget, 1, 1)
         self.layout.addWidget(self.result_widget, 1, 1)
 
-        self.boardWidget.set_active(False)
+        self.boardWidget.highlight_fields([])
 
     def analyze_game(self):
         self.clear_layout()
@@ -112,7 +113,7 @@ class GoApplication(QMainWindow):
         self.layout.addWidget(self.boardWidget, 1, 1)
         self.layout.addWidget(self.analyze_widget, 2, 1)
 
-        self.boardWidget.set_active(True)
+        self.boardWidget.highlight_fields(None)
         self.analyze_widget.set_history_steps(len(self.game.history) - 1)
 
     def clear_layout(self):
