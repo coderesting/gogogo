@@ -19,7 +19,7 @@ class TutorialWindow(QDialog):
         # Disable the maximize button on macOS
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowMaximizeButtonHint)
         self.setModal(True)
-        self.setWindowTitle('GoGoGo Tutorial')
+        self.setWindowTitle('How to play GoGoGo')
         self.setWindowIcon(QIcon('icons/app.png'))
 
         self.title = QLabel()

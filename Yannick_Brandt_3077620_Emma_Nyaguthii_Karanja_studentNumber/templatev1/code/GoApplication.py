@@ -1,8 +1,10 @@
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout
 
+from AboutWindow import AboutWindow
 from ActionsWidget import ActionsWidget
 from AnalyzeWidget import AnalyzeWidget
+from MenuBar import MenuBar
 from ResultWidget import ResultWidget
 from StatusWidget import StatusWidget
 from board.BoardWidget import BoardWidget
@@ -32,6 +34,12 @@ class GoApplication(QMainWindow):
         self.placeholder_widget = QWidget()
 
         self.tutorial_window = TutorialWindow(parent=self)
+        self.about_window = AboutWindow(parent=self)
+
+        menu_bar = MenuBar()
+        menu_bar.show_tutorial.connect(self.show_tutorial)
+        menu_bar.show_about.connect(self.about_window.show)
+        self.setMenuBar(menu_bar)
 
         self.connect_widgets()
 
