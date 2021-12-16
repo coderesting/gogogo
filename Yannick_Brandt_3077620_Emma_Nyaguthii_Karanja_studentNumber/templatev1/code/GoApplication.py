@@ -1,3 +1,4 @@
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout
 
@@ -119,7 +120,7 @@ class GoApplication(QMainWindow):
         self.layout.addWidget(self.status_widget, 0, 1)
         self.layout.addWidget(self.playerWidgets[1], 0, 2)
         self.layout.addWidget(self.boardWidget, 1, 1)
-        self.layout.addWidget(self.analyze_widget, 2, 1)
+        self.layout.addWidget(self.analyze_widget, 2, 1, Qt.AlignCenter)
 
         self.boardWidget.highlight_fields(None)
         self.analyze_widget.set_history_steps(len(self.game.history) - 1)

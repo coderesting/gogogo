@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt, pyqtSignal, QPropertyAnimation, QEasingCurve
-from PyQt5.QtWidgets import QWidget, QSlider, QLabel, QPushButton, QGridLayout
+from PyQt5.QtWidgets import QWidget, QSlider, QLabel, QPushButton, QHBoxLayout, QVBoxLayout
 
 
 class AnalyzeWidget(QWidget):
@@ -10,6 +10,7 @@ class AnalyzeWidget(QWidget):
         super().__init__(parent)
 
         scroll_hint = QLabel("Step through the game")
+        scroll_hint.setStyleSheet('font-size: 14px;')
         scroll_hint.setAlignment(Qt.AlignCenter)
         scroll_hint.setContentsMargins(10, 10, 10, 10)
 
@@ -18,20 +19,27 @@ class AnalyzeWidget(QWidget):
         self.slider.valueChanged.connect(self.show_step)
 
         new_game_button = QPushButton("New Game")
+        new_game_button.setStyleSheet('font-size: 14px; padding:10px')
         new_game_button.clicked.connect(self.new_game)
 
         self.anim = QPropertyAnimation(self.slider, b"value")
         self.anim.setEndValue(0)
         self.anim.setEasingCurve(QEasingCurve.OutQuart)
 
-        layout = QGridLayout()
-        layout.addWidget(scroll_hint, 0, 0, 1, 3)
-        layout.addWidget(QLabel('Start'), 1, 0)
-        layout.addWidget(self.slider, 1, 1)
-        layout.addWidget(QLabel('End'), 1, 2)
-        layout.addWidget(new_game_button, 2, 0, 1, 3)
+        slider_layout = QHBoxLayout()
+        slider_layout.addWidget(QLabel('Start'))
+        slider_layout.addWidget(self.slider)
+        slider_layout.addWidget(QLabel('End'))
 
-        self.setLayout(layout)
+        analyze_layout = QVBoxLayout()
+        analyze_layout.setSpacing(10)
+        analyze_layout.addWidget(scroll_hint)
+        analyze_layout.addLayout(slider_layout)
+        analyze_layout.addWidget(new_game_button)
+
+        self.setLayout(analyze_layout)
+        self.setMinimumWidth(300)
+        self.setMaximumWidth(600)
 
     def set_history_steps(self, steps: int):
         self.slider.setMaximum(steps)
