@@ -102,7 +102,7 @@ class GoApplication(QMainWindow):
         self.layout.addWidget(self.actionsWidget, 2, 1)
 
         self.boardWidget.highlight_fields(None)
-        self.game.start_new_game(conf.handicap)
+        self.game.start_new_game(conf)
 
     def game_ended(self):
         self.clear_layout()

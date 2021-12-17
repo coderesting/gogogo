@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QWidget
 
 from board.BoardState import BoardState
 from board.Field import Field
+from configuration.GameConfiguration import GameConfiguration
 from game.GameState import GameState, GameStatus, is_playing_status, is_end_status, WinnerStatus
 from player.PlayerState import PlayerState
 
@@ -30,6 +31,7 @@ class Game(QWidget):
         self.player_states = []
         self.status = None
         self.current_player = 0
+        self.conf = None
 
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_timer)
@@ -38,27 +40,30 @@ class Game(QWidget):
 
     def update_timer(self):
         """ Count down the timer of the current player and end the game if the time of one player reaches 0"""
-        if self.status == GameStatus.TURN_PLAYER_0 or self.status == GameStatus.TURN_PLAYER_1:
+        if is_playing_status(self.status) and self.conf.time_limit is not None:
             if self.player_states[self.current_player].remaining_time > 0:
                 self.player_states[self.current_player].remaining_time -= 1
             else:
                 self.set_game_status(GameStatus.END_TIMEOUT)
             self.player_states_changed.emit(self.player_states)
 
-    def start_new_game(self, handicap: float):
+    def start_new_game(self, conf: GameConfiguration):
+        self.conf = conf
         self.reset()
-        self.player_states[1].captured_stones += handicap
 
     def reset(self):
         self.board_state = BoardState()
         self.history = []
         self.player_states = [PlayerState(), PlayerState()]
+        self.player_states[1].captured_stones += self.conf.handicap
+        self.player_states[0].remaining_time = self.conf.time_limit
+        self.player_states[1].remaining_time = self.conf.time_limit
 
         self.set_game_status(GameStatus.TURN_PLAYER_0)
         self.board_state_changed.emit(self.board_state)
         self.player_states_changed.emit(self.player_states)
 
-        self.current_player = 0
+        self.set_current_player(0)
 
         self.create_history_entry()
 
@@ -78,7 +83,7 @@ class Game(QWidget):
         self.player_states[1 - self.current_player].captured_stones += 1
 
         self.set_current_player(1 - self.current_player)
-        
+
         if self.player_states[1 - self.current_player].consecutive_passes == 2:
             self.set_game_status(GameStatus.END_TWO_PASSES)
 

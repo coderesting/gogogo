@@ -11,11 +11,11 @@ class WelcomeHeadline(QWidget):
         welcome_label.setAlignment(Qt.AlignCenter)
 
         black_welcome_stone = QLabel()
-        black_welcome_stone.setPixmap(QPixmap('icons/blackStone.png').scaledToWidth(30))
+        black_welcome_stone.setPixmap(QPixmap('icons/blackStone.png').scaledToWidth(30, Qt.SmoothTransformation))
         black_welcome_stone.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
 
         white_welcome_stone = QLabel()
-        white_welcome_stone.setPixmap(QPixmap('icons/whiteStone.png').scaledToWidth(30))
+        white_welcome_stone.setPixmap(QPixmap('icons/whiteStone.png').scaledToWidth(30, Qt.SmoothTransformation))
         white_welcome_stone.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
 
         welcome_layout = QHBoxLayout()

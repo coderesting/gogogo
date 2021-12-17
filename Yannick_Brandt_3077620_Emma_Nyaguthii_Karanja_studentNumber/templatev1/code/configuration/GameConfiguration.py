@@ -2,6 +2,7 @@ class GameConfiguration:
     names = []
     handicap: float
 
-    def __init__(self, names, handicap):
+    def __init__(self, names, handicap, time_limit):
         self.names = names
         self.handicap = handicap
+        self.time_limit = time_limit

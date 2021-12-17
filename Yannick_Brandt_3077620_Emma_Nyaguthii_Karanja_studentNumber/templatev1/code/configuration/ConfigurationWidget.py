@@ -5,6 +5,7 @@ from configuration.GameConfiguration import GameConfiguration
 from configuration.HandicapInput import HandicapInput
 from configuration.MainActions import MainActions
 from configuration.PlayerNameInput import PlayerNameInput
+from configuration.TimerInput import TimerInput
 from configuration.WelcomeHeadline import WelcomeHeadline
 
 
@@ -21,6 +22,8 @@ class ConfigurationWidget(QWidget):
 
         self.handicap_input = HandicapInput()
 
+        self.timer_input = TimerInput()
+
         self.main_actions = MainActions()
         self.main_actions.show_tutorial.connect(self.show_tutorial.emit)
         self.main_actions.start_game.connect(self.trigger_game_start)
@@ -32,6 +35,7 @@ class ConfigurationWidget(QWidget):
         layout.addWidget(welcome_headline)
         layout.addWidget(self.player_name_input)
         layout.addWidget(self.handicap_input)
+        layout.addWidget(self.timer_input)
         layout.addWidget(self.main_actions)
         layout.addStretch()
         self.setMaximumWidth(600)
@@ -42,5 +46,6 @@ class ConfigurationWidget(QWidget):
         self.setLayout(layout)
 
     def trigger_game_start(self):
-        conf = GameConfiguration(self.player_name_input.get_player_names(), self.handicap_input.get_handicap())
+        conf = GameConfiguration(self.player_name_input.get_player_names(), self.handicap_input.get_handicap(),
+                                 self.timer_input.get_time_limit())
         self.start_game.emit(conf)

@@ -1,6 +1,6 @@
 class PlayerState:
     is_playing: bool
-    remaining_time: int
+    remaining_time = None
     captured_stones: int
     territory: int
     consecutive_passes: int
@@ -19,7 +19,7 @@ class PlayerState:
 
     def reset(self):
         self.is_playing = False
-        self.remaining_time = 900  # 15min in seconds
+        self.remaining_time = None  # 15min in seconds
         self.captured_stones = 0
         self.territory = 0
         self.consecutive_passes = 0

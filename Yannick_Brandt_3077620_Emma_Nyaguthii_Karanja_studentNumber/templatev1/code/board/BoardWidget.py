@@ -87,6 +87,8 @@ class BoardWidget(QWidget):
 
     def paintEvent(self, event: QPaintEvent):
         painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
+        painter.setRenderHint(QPainter.SmoothPixmapTransform)
         painter.drawImage(self.board_rect, QImage('icons/board.png'))
         self.draw_stones(painter)
         if self.invalid_field:
