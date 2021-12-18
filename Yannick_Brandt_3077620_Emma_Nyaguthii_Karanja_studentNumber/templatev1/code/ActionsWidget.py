@@ -5,21 +5,21 @@ from BigButton import BigButton
 
 
 class ActionsWidget(QWidget):
-    reset = pyqtSignal()
+    restart = pyqtSignal()
     pass_stone = pyqtSignal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.reset_button = BigButton("Reset")
-        self.reset_button.clicked.connect(self.reset.emit)
+        self.restart_button = BigButton("Restart")
+        self.restart_button.clicked.connect(self.restart.emit)
 
         self.pass_button = BigButton("Pass")
         self.pass_button.clicked.connect(self.pass_stone.emit)
 
         layout = QHBoxLayout()
         layout.setSpacing(20)
-        layout.addWidget(self.reset_button)
+        layout.addWidget(self.restart_button)
         layout.addWidget(self.pass_button)
 
         self.setLayout(layout)

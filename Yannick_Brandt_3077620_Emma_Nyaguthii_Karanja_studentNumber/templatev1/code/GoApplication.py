@@ -40,6 +40,9 @@ class GoApplication(QMainWindow):
         menu_bar = MenuBar()
         menu_bar.show_tutorial.connect(self.show_tutorial)
         menu_bar.show_about.connect(self.about_window.show)
+        menu_bar.new_game.connect(self.configure_game)
+        menu_bar.restart.connect(self.game.restart)
+        menu_bar.exit.connect(self.close)
         self.setMenuBar(menu_bar)
 
         self.connect_widgets()
@@ -67,7 +70,7 @@ class GoApplication(QMainWindow):
         self.game.board_state_changed.connect(self.boardWidget.set_state)
         self.game.player_states_changed.connect(self.player_states_changed)
         self.game.game_status_changed.connect(self.game_status_changed)
-        self.actionsWidget.reset.connect(self.game.reset)
+        self.actionsWidget.restart.connect(self.game.restart)
         self.actionsWidget.pass_stone.connect(self.game.pass_stone)
 
         self.result_widget.new_game.connect(self.configure_game)
@@ -88,12 +91,14 @@ class GoApplication(QMainWindow):
     def configure_game(self):
         self.clear_layout()
         self.layout.addWidget(self.configuration_widget, 0, 0)
+        self.menuBar().show_game_menu(False)
 
     def start_new_game(self, conf: GameConfiguration):
         self.clear_layout()
         self.playerWidgets[0] = PlayerWidget(conf.names[0], QPixmap('icons/blackStone.png'))
         self.playerWidgets[1] = PlayerWidget(conf.names[1], QPixmap('icons/blackStone.png'))
         self.status_widget = StatusWidget(conf.names)
+        self.menuBar().show_game_menu(True)
 
         self.layout.addWidget(self.playerWidgets[0], 0, 0)
         self.layout.addWidget(self.status_widget, 0, 1)

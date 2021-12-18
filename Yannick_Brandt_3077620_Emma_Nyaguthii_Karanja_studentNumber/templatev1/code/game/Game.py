@@ -49,9 +49,9 @@ class Game(QWidget):
 
     def start_new_game(self, conf: GameConfiguration):
         self.conf = conf
-        self.reset()
+        self.restart()
 
-    def reset(self):
+    def restart(self):
         self.board_state = BoardState()
         self.history = []
         self.player_states = [PlayerState(), PlayerState()]
