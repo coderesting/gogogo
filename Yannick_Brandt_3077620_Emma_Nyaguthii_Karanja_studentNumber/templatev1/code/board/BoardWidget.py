@@ -58,7 +58,7 @@ class BoardWidget(QWidget):
 
         self.board_rect = QRectF(board_x, board_y, board_length, board_length)
 
-        self.board_padding = board_length / 60
+        self.board_padding = board_length / 78
         self.field_padding = board_length / 60
         self.field_width = (board_length - self.board_padding * 2) / 7
 
