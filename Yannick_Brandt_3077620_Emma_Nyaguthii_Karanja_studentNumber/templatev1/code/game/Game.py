@@ -56,12 +56,12 @@ class Game(QWidget):
         self.history = []
         self.player_states = [PlayerState(), PlayerState()]
         self.player_states[1].captured_stones += self.conf.handicap
+
         self.player_states[0].remaining_time = self.conf.time_limit
         self.player_states[1].remaining_time = self.conf.time_limit
 
         self.set_game_status(GameStatus.TURN_PLAYER_0)
         self.board_state_changed.emit(self.board_state)
-        self.player_states_changed.emit(self.player_states)
 
         self.set_current_player(0)
 

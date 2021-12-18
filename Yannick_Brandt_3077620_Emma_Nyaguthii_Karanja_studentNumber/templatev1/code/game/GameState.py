@@ -4,7 +4,8 @@ from board.BoardState import BoardState
 
 
 def is_end_status(status):
-    return status == GameStatus.END_RESIGN or status == GameStatus.END_NO_MOVES or status == GameStatus.END_TWO_PASSES or status == GameStatus.END_TIMEOUT
+    return status == GameStatus.END_RESIGN or status == GameStatus.END_NO_MOVES or \
+           status == GameStatus.END_TWO_PASSES or status == GameStatus.END_TIMEOUT
 
 
 def is_playing_status(status):
