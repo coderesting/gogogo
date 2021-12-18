@@ -28,7 +28,7 @@ class AboutWindow(QDialog):
         name_label.setStyleSheet("font-size:20px")
         info_layout.addWidget(name_label)
 
-        developer_label = QLabel("Designed and developed mostly by Yannick Brandt")
+        developer_label = QLabel("Designed and developed by Yannick Brandt and Emma Karanja")
         info_layout.addWidget(developer_label)
 
         description_label = QLabel("""GoGoGo is a small student project designed and developed for an assignment \
@@ -44,6 +44,7 @@ at Griffith College Dublin. It allows two human players to play the board game g
         about_layout.addStretch()
 
         self.setLayout(about_layout)
+        self.setContentsMargins(10, 10, 10, 10)
 
         # Fix the window size to the minimum size
         self.setFixedSize(self.sizeHint())

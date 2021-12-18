@@ -1,5 +1,5 @@
 from PyQt5.QtCore import pyqtSignal, Qt
-from PyQt5.QtWidgets import QWidget, QPushButton, QHBoxLayout
+from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
 from BigButton import BigButton
 
@@ -20,7 +20,7 @@ class ResultWidget(QWidget):
         analyze_button.clicked.connect(self.analyze.emit)
         layout.addWidget(analyze_button)
 
-        new_game_button = QPushButton("  New Game  ")
+        new_game_button = BigButton("  New Game  ")
         new_game_button.clicked.connect(self.new_game.emit)
         layout.addWidget(new_game_button)
         layout.addStretch()
