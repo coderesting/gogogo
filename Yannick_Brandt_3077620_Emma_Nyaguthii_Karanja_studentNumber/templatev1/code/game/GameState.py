@@ -3,15 +3,6 @@ from enum import Enum
 from board.BoardState import BoardState
 
 
-def is_end_status(status):
-    return status == GameStatus.END_RESIGN or status == GameStatus.END_NO_MOVES or \
-           status == GameStatus.END_TWO_PASSES or status == GameStatus.END_TIMEOUT
-
-
-def is_playing_status(status):
-    return status == GameStatus.TURN_PLAYER_0 or status == GameStatus.TURN_PLAYER_1
-
-
 class WinnerStatus(Enum):
     NONE = -1
     PLAYER_0 = 0
@@ -27,6 +18,15 @@ class GameStatus(Enum):
     TURN_PLAYER_0 = 4
     TURN_PLAYER_1 = 5
     ANALYSIS = 9
+
+
+def is_end_status(status: GameStatus):
+    return status == GameStatus.END_RESIGN or status == GameStatus.END_NO_MOVES or \
+           status == GameStatus.END_TWO_PASSES or status == GameStatus.END_TIMEOUT
+
+
+def is_playing_status(status: GameStatus):
+    return status == GameStatus.TURN_PLAYER_0 or status == GameStatus.TURN_PLAYER_1
 
 
 class GameState:

@@ -1,8 +1,10 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QCheckBox, QSpinBox, QFormLayout, QSizePolicy
+from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QCheckBox, QSpinBox, QFormLayout
 
 
 class TimerInput(QWidget):
+    """Lets the user choose if a time limit is used and how long it should be"""
+
     def __init__(self):
         super().__init__()
 
@@ -12,7 +14,6 @@ class TimerInput(QWidget):
         self.timer_input.setMaximum(500)
         self.timer_input.setValue(15)
         self.timer_input.setSuffix('min')
-        self.timer_input.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
 
         self.use_timer_checkbox = QCheckBox()
         self.use_timer_checkbox.setCheckState(2)
@@ -23,7 +24,6 @@ class TimerInput(QWidget):
         input_layout.addRow("Time limit:", self.timer_input)
 
         timer_label = QLabel("Timelimit per player (across all moves)")
-        timer_label.setAlignment(Qt.AlignCenter)
         timer_label.setStyleSheet('font-size:13px')
 
         timer_layout = QVBoxLayout()

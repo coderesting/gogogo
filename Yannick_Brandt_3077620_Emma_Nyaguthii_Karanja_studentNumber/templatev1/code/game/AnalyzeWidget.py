@@ -6,6 +6,11 @@ from BigButton import BigButton
 
 
 class AnalyzeWidget(QWidget):
+    """Shows controls to step through the game
+
+    :signal show_step(int): Request to rewind the game to the specified step
+    :signal new_game(): Request to start a new game
+    """
     show_step = pyqtSignal(int)
     new_game = pyqtSignal()
 
@@ -24,6 +29,7 @@ class AnalyzeWidget(QWidget):
         new_game_button = BigButton("New Game")
         new_game_button.clicked.connect(self.new_game)
 
+        # Scroll the slider in the beginning to indicate the ability to step through the game
         self.anim = QPropertyAnimation(self.slider, b"value")
         self.anim.setEndValue(0)
         self.anim.setEasingCurve(QEasingCurve.OutQuart)
@@ -46,18 +52,21 @@ class AnalyzeWidget(QWidget):
         analyze_layout.addWidget(scroll_hint)
         analyze_layout.addLayout(slider_layout)
         analyze_layout.addWidget(new_game_button)
-
         self.setLayout(analyze_layout)
+
         self.setMinimumWidth(300)
         self.setMaximumWidth(600)
 
     def back(self):
+        """Step one step back"""
         self.slider.setValue(self.slider.value() - 1)
 
     def next(self):
+        """Step one step forward"""
         self.slider.setValue(self.slider.value() + 1)
 
     def step_changed(self, value):
+        """The value of the slider changed"""
         self.back_button.setDisabled(False)
         self.next_button.setDisabled(False)
 
@@ -69,7 +78,9 @@ class AnalyzeWidget(QWidget):
         self.show_step.emit(value)
 
     def set_history_steps(self, steps: int):
+        """Set the number of steps for in the current game"""
         self.slider.setMaximum(steps)
+        
         self.anim.setStartValue(steps)
         duration = max(min(steps * 100, 100), 3000)
         self.anim.setDuration(duration)

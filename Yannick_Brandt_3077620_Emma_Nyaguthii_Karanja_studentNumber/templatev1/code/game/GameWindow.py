@@ -15,6 +15,10 @@ from game.player.PlayerWidget import PlayerWidget
 
 
 class GameWindow(Window):
+    """Shows a game of go
+
+    :signal configure_game(): Request to show the game configuration window
+    """
     configure_game = pyqtSignal()
 
     def __init__(self):
@@ -42,8 +46,6 @@ class GameWindow(Window):
         self.central_widget.setLayout(self.central_layout)
         self.setCentralWidget(self.central_widget)
 
-        self.conf = None
-
     def connect_widgets(self):
         self.boardWidget.clicked_field.connect(self.game.place_stone)
 
@@ -55,22 +57,27 @@ class GameWindow(Window):
         self.actionsWidget.pass_stone.connect(self.game.pass_stone)
 
         self.result_widget.new_game.connect(self.configure_game)
-        self.result_widget.analyze.connect(self.analyze_game)
+        self.result_widget.analyze.connect(self.show_analysis_layout)
 
         self.analyze_widget.show_step.connect(self.game.rewind)
         self.analyze_widget.new_game.connect(self.configure_game)
 
-    def game_status_changed(self, status: GameStatus):
-        if is_end_status(status):
-            self.game_ended()
-        self.status_widget.set_status(status, self.game.get_winner_status())
+    def game_status_changed(self, game_status: GameStatus):
+        """Show the game end layout if the game ended
+
+        :param status: current GameStatus
+        """
+        if is_end_status(game_status):
+            self.show_game_end_layout()
+        self.status_widget.set_status(game_status, self.game.get_winner_status())
 
     def player_states_changed(self, states):
         self.playerWidgets[0].set_state(states[0])
         self.playerWidgets[1].set_state(states[1])
 
-    def start_new_game(self, conf: GameConfiguration):
+    def show_game_layout(self, conf: GameConfiguration):
         self.clear_layout()
+        # Create new Status/PlayerWidgets with updated names
         self.playerWidgets[0] = PlayerWidget(conf.names[0], QPixmap('icons/blackStone.png'))
         self.playerWidgets[1] = PlayerWidget(conf.names[1], QPixmap('icons/blackStone.png'))
         self.status_widget = StatusWidget(conf.names)
@@ -83,10 +90,11 @@ class GameWindow(Window):
 
         self.central_widget.setLayout(self.central_widget.layout())
 
+        # Remove the darkened board from the game end layout
         self.boardWidget.highlight_fields(None)
         self.game.start_new_game(conf)
 
-    def game_ended(self):
+    def show_game_end_layout(self):
         self.clear_layout()
         self.central_layout.addWidget(self.playerWidgets[0], 0, 0)
         self.central_layout.addWidget(self.status_widget, 0, 1)
@@ -94,9 +102,10 @@ class GameWindow(Window):
         self.central_layout.addWidget(self.boardWidget, 1, 1)
         self.central_layout.addWidget(self.result_widget, 1, 1)
 
+        # Darken the board to improve contrast to the action buttons on the field
         self.boardWidget.highlight_fields([])
 
-    def analyze_game(self):
+    def show_analysis_layout(self):
         self.clear_layout()
         self.central_layout.addWidget(self.playerWidgets[0], 0, 0)
         self.central_layout.addWidget(self.status_widget, 0, 1)
@@ -108,7 +117,7 @@ class GameWindow(Window):
         self.analyze_widget.set_history_steps(len(self.game.history) - 1)
 
     def clear_layout(self):
-
+        """Remove all widgets from the current layout"""
         widgets = [self.playerWidgets[0], self.playerWidgets[1], self.status_widget,
                    self.boardWidget, self.actionsWidget, self.analyze_widget, self.result_widget]
         for widget in widgets:

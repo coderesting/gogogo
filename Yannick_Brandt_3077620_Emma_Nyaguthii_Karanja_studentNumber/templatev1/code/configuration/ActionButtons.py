@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout
 from BigButton import BigButton
 
 
-class MainActions(QWidget):
+class ActionButtons(QWidget):
     show_tutorial = pyqtSignal()
     start_game = pyqtSignal()
 

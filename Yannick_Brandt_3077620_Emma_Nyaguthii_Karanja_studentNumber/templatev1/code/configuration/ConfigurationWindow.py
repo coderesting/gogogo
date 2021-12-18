@@ -2,8 +2,8 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QVBoxLayout, QWidget, QLayout
 
 from Window import Window
+from configuration.ActionButtons import ActionButtons
 from configuration.GameConfiguration import GameConfiguration
-from configuration.MainActions import MainActions
 from configuration.WelcomeHeadline import WelcomeHeadline
 from configuration.inputs.HandicapInput import HandicapInput
 from configuration.inputs.PlayerNameInput import PlayerNameInput
@@ -11,22 +11,23 @@ from configuration.inputs.TimerInput import TimerInput
 
 
 class ConfigurationWindow(Window):
+    """Shows a window to configure the game of go
+
+    :signal start_game(GameConfiguration): Request to start the game with the provided configuration
+    """
     start_game = pyqtSignal(GameConfiguration)
 
     def __init__(self):
         super().__init__()
         welcome_headline = WelcomeHeadline()
-
         self.player_name_input = PlayerNameInput()
-
         self.handicap_input = HandicapInput()
-
         self.timer_input = TimerInput()
 
-        self.main_actions = MainActions()
-        self.main_actions.show_tutorial.connect(self.show_tutorial)
-        self.main_actions.start_game.connect(self.trigger_game_start)
-        self.player_name_input.error_state_changed.connect(self.main_actions.set_disabled)
+        self.action_buttons = ActionButtons()
+        self.action_buttons.show_tutorial.connect(self.show_tutorial)
+        self.action_buttons.start_game.connect(self.trigger_game_start)
+        self.player_name_input.error_state_changed.connect(self.action_buttons.set_disabled)
 
         layout = QVBoxLayout()
         layout.setSpacing(10)
@@ -35,7 +36,7 @@ class ConfigurationWindow(Window):
         layout.addWidget(self.player_name_input)
         layout.addWidget(self.handicap_input)
         layout.addWidget(self.timer_input)
-        layout.addWidget(self.main_actions)
+        layout.addWidget(self.action_buttons)
         layout.addStretch()
 
         self.central_widget = QWidget()
@@ -43,7 +44,7 @@ class ConfigurationWindow(Window):
         self.setCentralWidget(self.central_widget)
 
         self.central_widget.setMinimumWidth(400)
-
+        # Prevent resizing
         self.layout().setSizeConstraint(QLayout.SetFixedSize)
 
     def trigger_game_start(self):

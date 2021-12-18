@@ -61,8 +61,8 @@ class BoardState:
             self.iterator_field = Field(field.row, field.col + 1)
         return field
 
-    # Two boards are equal if all their field values are equal
     def __eq__(self, obj):
+        """Two boards are equal if all their field values are equal"""
         if not isinstance(obj, BoardState):
             return False
 

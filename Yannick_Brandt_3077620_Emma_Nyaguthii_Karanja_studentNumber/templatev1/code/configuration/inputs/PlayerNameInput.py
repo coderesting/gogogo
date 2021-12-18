@@ -5,6 +5,10 @@ from configuration.inputs.InputErrorLabel import InputErrorLabel
 
 
 class PlayerNameInput(QWidget):
+    """Lets the user input two player names
+
+    :signal error_state_changed(bool): True = There are errors in the names; False = No errors
+    """
     error_state_changed = pyqtSignal(bool)
 
     def __init__(self):
@@ -27,22 +31,23 @@ class PlayerNameInput(QWidget):
         self.name_inputs[1].setPlaceholderText("name")
         self.name_inputs[1].textChanged.connect(self.check_names)
 
-        layout = QGridLayout()
-        layout.addWidget(name_labels[0], 0, 0)
-        layout.addWidget(self.name_inputs[0], 1, 0)
-        layout.addWidget(self.error_labels[0], 2, 0)
+        player_names_layout = QGridLayout()
+        player_names_layout.addWidget(name_labels[0], 0, 0)
+        player_names_layout.addWidget(self.name_inputs[0], 1, 0)
+        player_names_layout.addWidget(self.error_labels[0], 2, 0)
 
-        layout.addWidget(against_label, 1, 1)
+        player_names_layout.addWidget(against_label, 1, 1)
 
-        layout.addWidget(name_labels[1], 0, 2)
-        layout.addWidget(self.name_inputs[1], 1, 2)
-        layout.addWidget(self.error_labels[1], 2, 2)
-        layout.setContentsMargins(5, 15, 5, 0)
+        player_names_layout.addWidget(name_labels[1], 0, 2)
+        player_names_layout.addWidget(self.name_inputs[1], 1, 2)
+        player_names_layout.addWidget(self.error_labels[1], 2, 2)
+        player_names_layout.setContentsMargins(5, 15, 5, 0)
+        self.setLayout(player_names_layout)
 
         self.check_names()
-        self.setLayout(layout)
 
     def check_names(self):
+        """ Check if the names are valid and display an error message otherwise"""
         has_error = False
         for i in [0, 1]:
             if len(self.name_inputs[i].text()) > 15:
@@ -55,6 +60,7 @@ class PlayerNameInput(QWidget):
     def get_player_names(self):
         names = [None, None]
         for i in [0, 1]:
-            name = self.name_inputs[i].text()
+            name = self.name_inputs[i].text().strip()
+            # Use backup names (Anonymous x) if no name is provided
             names[i] = name if name else self.backup_names[i]
         return names

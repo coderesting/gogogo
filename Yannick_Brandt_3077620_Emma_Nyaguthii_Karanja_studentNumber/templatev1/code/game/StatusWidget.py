@@ -6,6 +6,8 @@ from game.GameState import WinnerStatus
 
 
 class StatusWidget(QWidget):
+    """Shows the current status (GameStatus+WinnerStatus)"""
+
     def __init__(self, player_names, parent=None):
         super().__init__(parent)
         self.player_names = player_names
@@ -17,11 +19,16 @@ class StatusWidget(QWidget):
 
         layout = QHBoxLayout()
         layout.addWidget(self.status_label)
-
         self.setLayout(layout)
 
     def set_status(self, game_status: GameStatus, winner_status: WinnerStatus):
-        text = "Test"
+        """Calculates the status to display from Game + Winner status
+
+        :param game_status: current GameStatus
+        :param winner_status: current WinnerStatus
+        """
+        
+        text = "Error: unknown status"
         if is_end_status(game_status):
             if winner_status == WinnerStatus.PLAYER_0:
                 text = self.player_names[0] + ' won'

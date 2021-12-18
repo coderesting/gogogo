@@ -1,4 +1,4 @@
-from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QHBoxLayout
 
@@ -10,15 +10,10 @@ from tutorial.TutorialStep import TutorialStep
 
 
 class TutorialWindow(QDialog):
-    """
-    Shows help information about the GoGoGo application.
-    """
-    finished = pyqtSignal()
+    """Shows an interactive tutorial on how to play go"""
 
     def __init__(self, parent):
         super().__init__(parent, Qt.WindowTitleHint | Qt.WindowCloseButtonHint)
-        # Disable the maximize button on macOS
-        self.setWindowFlags(self.windowFlags() & ~Qt.WindowMaximizeButtonHint)
         self.setModal(True)
         self.setWindowTitle('How to play GoGoGo')
         self.setWindowIcon(QIcon('icons/app.png'))
@@ -49,6 +44,7 @@ class TutorialWindow(QDialog):
 
         buttons_layout = QHBoxLayout()
         buttons_layout.addWidget(self.back_button, 1)
+        # Make the next button bigger
         buttons_layout.addWidget(self.next_button, 2)
 
         layout = QVBoxLayout()
@@ -70,6 +66,10 @@ class TutorialWindow(QDialog):
         self.show_step()
 
     def clicked_field(self, field: Field):
+        """The user clicked on a field
+
+        :param field: clicked Field
+        """
         step = self.steps[self.current_step]
         if step.field_to_click == field:
             if step.show_invalid_move:
@@ -78,6 +78,7 @@ class TutorialWindow(QDialog):
             self.show_step()
 
     def next_step(self):
+        """Show the next step or close the window when the end is reached"""
         if self.current_step < len(self.steps) - 1:
             self.current_step += 1
             self.show_step()
@@ -85,11 +86,13 @@ class TutorialWindow(QDialog):
             self.close()
 
     def previous_step(self):
+        """Show the previous step"""
         if self.current_step > 0:
             self.current_step -= 1
             self.show_step()
 
     def show_step(self):
+        """Update all widgets to show the current step"""
         step = self.steps[self.current_step]
         if step.title:
             self.title.setText(step.title)
@@ -102,6 +105,7 @@ class TutorialWindow(QDialog):
         self.next_button.setDisabled(step.field_to_click is not None)
         self.next_button.setText("Finish Tutorial" if self.current_step == len(self.steps) - 1 else "Next")
         self.back_button.setDisabled(self.current_step == 0)
+        # Remove the focus from the back button to prevent the user from thinking he/she should click it
         self.back_button.clearFocus()
 
     def create_steps(self):

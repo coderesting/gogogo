@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QWidget
 from board.BoardState import BoardState
 from board.Field import Field
 from configuration.GameConfiguration import GameConfiguration
-from game.GameState import GameState, GameStatus, is_playing_status, is_end_status, WinnerStatus
+from game.GameState import GameState, GameStatus, WinnerStatus, is_end_status, is_playing_status
 from game.player.PlayerState import PlayerState
 
 
@@ -13,10 +13,10 @@ class Game(QWidget):
     This class represents a go game.
     It checks the validity of moves, calculates each player's score and keeps track of the game status.
 
-    signal game_status_changed(gameState:GameState) the status of the game changed
-    signal board_state_changed(boardState:BoardState) the status of the board changed
-    signal player_states_changed(playerStates:PlayerState[]) the status of at least one player changed
-    signal invalid_move(field:Field) the last played move was invalid
+    :signal game_status_changed(gameState:GameStatus): the status of the game changed
+    :signal board_state_changed(boardState:BoardState): the status of the board changed
+    :signal player_states_changed(playerStates:PlayerState[]): the status of at least one player changed
+    :signal invalid_move(field:Field): the last played move was invalid
     """
     game_status_changed = pyqtSignal(GameStatus)
     board_state_changed = pyqtSignal(BoardState)
@@ -31,15 +31,17 @@ class Game(QWidget):
         self.player_states = []
         self.status = None
         self.current_player = 0
+        # The configuration of the current game
         self.conf = None
 
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_timer)
+        # Count down every one second
         self.timer.setInterval(1000)
         self.timer.start()
 
     def update_timer(self):
-        """ Count down the timer of the current player and end the game if the time of one player reaches 0"""
+        """ Count down the timer of the current player and ends the game if the time of one player reaches 0"""
         if is_playing_status(self.status) and self.conf.time_limit is not None:
             if self.player_states[self.current_player].remaining_time > 0:
                 self.player_states[self.current_player].remaining_time -= 1
@@ -48,10 +50,15 @@ class Game(QWidget):
             self.player_states_changed.emit(self.player_states)
 
     def start_new_game(self, conf: GameConfiguration):
+        """Starts a new game
+
+        :conf: GameConfiguration to start the game with
+        """
         self.conf = conf
         self.restart()
 
     def restart(self):
+        """Restarts the current game"""
         self.board_state = BoardState()
         self.history = []
         self.player_states = [PlayerState(), PlayerState()]
@@ -78,7 +85,7 @@ class Game(QWidget):
         self.board_state_changed.emit(state.board_state)
 
     def pass_stone(self):
-        """Passes a stone to the other player. Two consecutive passes ent the game"""
+        """Passes a stone to the other player. Two consecutive passes from one player end the game"""
         self.player_states[self.current_player].consecutive_passes += 1
         self.player_states[1 - self.current_player].captured_stones += 1
 
@@ -116,6 +123,10 @@ class Game(QWidget):
             self.invalid_move.emit(field)
 
     def set_current_player(self, current_player: int):
+        """Updates the current player
+
+        :param current_player: 0 or 1
+        """
         self.current_player = current_player
         self.player_states[1 - self.current_player].is_playing = False
         self.player_states[self.current_player].is_playing = True
@@ -198,7 +209,7 @@ class Game(QWidget):
         return False
 
     def field_has_liberty(self, board_state: BoardState, field: Field):
-        """ Calculates if a field has at least one liberty
+        """ Calculates if a field has at least one field of liberty
 
         :board_state: the BoardState to do the calculation on
         :field: the field to check the liberty for
@@ -294,11 +305,18 @@ class Game(QWidget):
         return fields
 
     def get_winner_status(self):
+        """Calculate the WinnerStatus
+
+        :returns: WinnerStatus of the current game
+        """
         if not is_end_status(self.status):
             return WinnerStatus.NONE
 
-        player0_score = self.player_states[0].captured_stones + self.player_states[0].territory
-        player1_score = self.player_states[1].captured_stones + self.player_states[1].territory
+        player0_score = len(self.get_fields_of_type(0)) + self.player_states[0].captured_stones + self.player_states[
+            0].territory
+        player1_score = len(self.get_fields_of_type(1)) + self.player_states[1].captured_stones + self.player_states[
+            1].territory
+
         if player0_score > player1_score:
             return WinnerStatus.PLAYER_0
         elif player1_score > player0_score:

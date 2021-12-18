@@ -10,10 +10,13 @@ from PyQt5.QtWidgets import QMenuBar, QAction
 
 class MenuBar(QMenuBar):
     """
-       Provides the menu with help/about windows
+       Provides the menu game and help actions
 
        :signal show_tutorial(): request to open the tutorial
        :signal show_about(): request to open about
+       :signal restart(): Request to restart the current game
+       :signal new_game(): Request to show the configuration window
+       :signal exit(): Request to exit the application
     """
     show_tutorial = pyqtSignal()
     show_about = pyqtSignal()
@@ -50,11 +53,12 @@ class MenuBar(QMenuBar):
         help_menu.addAction(help_action)
 
         # about menu item. Space is required to prevent macOS from moving this to another location
-        about_action = QAction(QIcon('./icons/app.png'), '​About​', self)
+        about_action = QAction(QIcon('./icons/app.png'), '​About', self)
         about_action.setShortcut('Ctrl+A')
         about_action.triggered.connect(self.show_about.emit)
         help_menu.addAction(about_action)
 
-    def show_game_menu(self, show_game_menu):
+    def show_game_menu(self, show_game_menu: bool):
+        """Enables actions that are only useful in the game window"""
         self.restart_action.setDisabled(not show_game_menu)
         self.new_game_action.setDisabled(not show_game_menu)

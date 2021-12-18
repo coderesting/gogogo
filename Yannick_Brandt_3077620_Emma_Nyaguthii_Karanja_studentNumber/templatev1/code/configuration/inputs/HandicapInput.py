@@ -3,6 +3,8 @@ from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QComboBox
 
 
 class HandicapInput(QWidget):
+    """Lets the user chose a handicap for the game"""
+
     def __init__(self):
         super().__init__()
 
@@ -12,7 +14,6 @@ class HandicapInput(QWidget):
         self.handicap_input.addItem('7.5 Points', 7.5)
 
         handicap_label = QLabel("Handicap (extra points for white)")
-        handicap_label.setAlignment(Qt.AlignCenter)
         handicap_label.setStyleSheet('font-size:13px')
 
         handicap_layout = QVBoxLayout()

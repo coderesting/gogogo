@@ -5,6 +5,11 @@ from BigButton import BigButton
 
 
 class ActionsWidget(QWidget):
+    """Shows restart and pass buttons
+
+    :signal restart(): Request to restart the current game
+    :signal pass_stone(): Request to pass a stone
+    """
     restart = pyqtSignal()
     pass_stone = pyqtSignal()
 
@@ -21,6 +26,6 @@ class ActionsWidget(QWidget):
         layout.setSpacing(20)
         layout.addWidget(self.restart_button)
         layout.addWidget(self.pass_button)
-
         self.setLayout(layout)
+        
         self.setMinimumWidth(300)

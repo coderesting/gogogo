@@ -4,6 +4,8 @@ from PyQt5.QtWidgets import QWidget, QLabel, QHBoxLayout
 
 
 class WelcomeHeadline(QWidget):
+    """Shows the app name with two go stones"""
+
     def __init__(self):
         super().__init__()
         welcome_label = QLabel("Welcome to GoGoGo")

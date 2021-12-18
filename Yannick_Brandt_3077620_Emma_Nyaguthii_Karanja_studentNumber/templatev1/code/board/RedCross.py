@@ -6,6 +6,7 @@ from board.Field import Field
 
 
 class RedCross(QWidget):
+    """Represents an animated red cross that can b drawn on the board if an invalid move is made"""
     _invalid_field_state = 0
     field: Field = None
     change = pyqtSignal()
@@ -30,6 +31,9 @@ class RedCross(QWidget):
     invalid_field_state = pyqtProperty(int, get_invalid_field_state, set_invalid_field_state)
 
     def show_at(self, field: Field):
+        """Animates the red cross in the specified field
+        :param field: Field to draw the field on
+        """
         self.field = field
         self.anim.stop()
         self.anim.start()

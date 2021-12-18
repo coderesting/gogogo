@@ -1,4 +1,5 @@
 class GameConfiguration:
+    """Represents all settings for a game of go"""
     names = []
     handicap: float
 

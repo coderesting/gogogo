@@ -7,6 +7,7 @@ from tutorial.TutorialWindow import TutorialWindow
 
 
 class Window(QMainWindow):
+    """Abstract class for both game and configuration window. Provides the menu and title/icon"""
 
     def __init__(self):
         super().__init__()

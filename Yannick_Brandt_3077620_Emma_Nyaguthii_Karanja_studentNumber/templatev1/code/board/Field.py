@@ -1,15 +1,18 @@
 class Field:
-    row: int
-    col: int
+    """Represents a field on the go board"""
 
     def __init__(self, row: int, col: int):
         self.row = row
         self.col = col
 
     def __eq__(self, obj):
+        """Two fields are equal if their row and colum match"""
         return isinstance(obj, Field) and obj.row == self.row and obj.col == self.col
 
     def neighbors(self):
+        """
+        :returns: an array of neighbor fields
+        """
         neighbors = []
         # Top neighbor
         if self.row > 0:

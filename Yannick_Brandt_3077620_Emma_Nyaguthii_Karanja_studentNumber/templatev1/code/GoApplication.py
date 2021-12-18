@@ -4,6 +4,8 @@ from game.GameWindow import GameWindow
 
 
 class GoApplication():
+    """Main application class. It handles the switching between game and configuration window
+    """
 
     def __init__(self):
         super().__init__()
@@ -20,6 +22,6 @@ class GoApplication():
         self.game_window.hide()
 
     def show_game_window(self, conf: GameConfiguration):
-        self.game_window.start_new_game(conf)
+        self.game_window.show_game_layout(conf)
         self.game_window.show()
         self.configuration_window.hide()
