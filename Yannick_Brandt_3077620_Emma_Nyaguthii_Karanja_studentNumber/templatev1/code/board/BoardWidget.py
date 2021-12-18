@@ -1,10 +1,10 @@
-from PyQt5.QtCore import pyqtSignal, QPropertyAnimation, QEasingCurve, pyqtProperty, Qt, QRectF, \
-    QMarginsF
-from PyQt5.QtGui import QResizeEvent, QMouseEvent, QPainter, QPaintEvent, QImage, QPen, QColor, QPainterPath, QBrush
+from PyQt5.QtCore import pyqtSignal, QRectF, QMarginsF
+from PyQt5.QtGui import QResizeEvent, QMouseEvent, QPainter, QPaintEvent, QImage, QColor, QPainterPath, QBrush
 from PyQt5.QtWidgets import QWidget, QSizePolicy
 
 from board.BoardState import BoardState
 from board.Field import Field
+from board.RedCross import RedCross
 
 
 class BoardWidget(QWidget):
@@ -15,36 +15,23 @@ class BoardWidget(QWidget):
     clicked_field = pyqtSignal(Field)
 
     state = BoardState()
-    active: bool = True
+
+    # Values to draw the board and stones
     board_rect = QRectF()
     board_padding: float
     field_width: float
     field_padding: float
-    invalid_field = None
+
     highlighted_fields = None
-    _invalid_field_state = 0
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
-        # create an animation to show an invalid move
-        self.anim = QPropertyAnimation(self, b"invalid_field_state")
-        self.anim.setDuration(1000)
-        self.anim.setStartValue(0)
-        self.anim.setEndValue(100)
-        self.anim.setEasingCurve(QEasingCurve.OutQuart)
 
-        self.setMinimumSize(300, 300)
+        self.red_cross = RedCross()
+        self.red_cross.change.connect(self.update)
+
+        self.setMinimumSize(400, 400)
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-
-    # custom property to animate an invalid move
-    def get_invalid_field_state(self):
-        return self._invalid_field_state
-
-    def set_invalid_field_state(self, value):
-        self._invalid_field_state = value
-        self.update()
-
-    invalid_field_state = pyqtProperty(int, get_invalid_field_state, set_invalid_field_state)
 
     def resizeEvent(self, evt: QResizeEvent):
         # calculate variables to display the board as a square in the widget
@@ -79,21 +66,22 @@ class BoardWidget(QWidget):
 
     def show_invalid_move(self, field: Field):
         """ Shows a red cross over a field to indicate an invalid move
-        :param field: field to draw the cross over
+        :param field: field to draw the cross on
         """
-        self.invalid_field = field
-        self.anim.stop()
-        self.anim.start()
+        self.red_cross.show_at(field)
 
     def paintEvent(self, event: QPaintEvent):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
         painter.setRenderHint(QPainter.SmoothPixmapTransform)
+
         painter.drawImage(self.board_rect, QImage('icons/board.png'))
+
         self.draw_stones(painter)
-        if self.invalid_field:
-            self.draw_invalid_field(painter, self.invalid_field)
-        # Draw a slight overlay if the board is not active
+
+        if self.red_cross.field:
+            self.red_cross.draw(painter, self.get_field_rect(self.red_cross.field), self.field_padding)
+
         if self.highlighted_fields is not None:
             self.draw_highlighted_fields(painter)
 
@@ -126,23 +114,8 @@ class BoardWidget(QWidget):
         y = self.board_rect.y() + self.board_padding + field.row * self.field_width
         return QRectF(x, y, self.field_width, self.field_width)
 
-    def draw_invalid_field(self, painter: QPainter, field: Field):
-        """ Draws a red cross over a field to indicate an invalid move
-        :param painter: QPainter to draw on
-        :param field: field to draw the cross over
-        """
-        field_margins = QMarginsF() + self.field_padding
-        field_rect = self.get_field_rect(field) - field_margins
-        # transform the invalidFieldState (0-100) to opacity values (0-255-0)
-        opacity = (-51 / 500) * pow(self._invalid_field_state, 2) + (51 / 5) * self._invalid_field_state
-        pen = QPen(QColor(255, 0, 0, opacity), self.field_padding * 1.5)
-        pen.setCapStyle(Qt.RoundCap)
-        painter.setPen(pen)
-        painter.drawLine(field_rect.topLeft(), field_rect.bottomRight())
-        painter.drawLine(field_rect.topRight(), field_rect.bottomLeft())
-
     def draw_highlighted_fields(self, painter: QPainter):
-        """Hightlights a number of fields by drawing an ellipse around them
+        """Highlights a number of fields by drawing an ellipse around them
 
         :painter: QPainter to draw on
         """
