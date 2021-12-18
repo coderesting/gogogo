@@ -27,10 +27,10 @@ class TimerInput(QWidget):
         timer_label.setStyleSheet('font-size:13px')
 
         timer_layout = QVBoxLayout()
+        timer_layout.setAlignment(Qt.AlignCenter)
         timer_layout.setSpacing(10)
         timer_layout.addWidget(timer_label)
         timer_layout.addLayout(input_layout)
-        timer_layout.setContentsMargins(5, 15, 5, 15)
         self.setLayout(timer_layout)
 
     def get_time_limit(self):

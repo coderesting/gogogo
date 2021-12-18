@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QLabel
 class InputErrorLabel(QLabel):
     """
     This widget shows an error message in a red box.
-    It is normally invisible but occupies space to prevent layout shifts
+    It is normally invisible but occupies space to prevent main_layout shifts
     """
 
     def __init__(self):
@@ -25,7 +25,7 @@ class InputErrorLabel(QLabel):
             self.hide()
 
     def hide(self):
-        # Occupy the same space as if the label was active to prevent layout shifts
+        # Occupy the same space as if the label was active to prevent main_layout shifts
         self.setStyleSheet('margin-bottom: 8px')
 
     def show(self):

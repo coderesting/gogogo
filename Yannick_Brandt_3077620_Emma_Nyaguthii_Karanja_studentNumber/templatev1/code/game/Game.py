@@ -5,7 +5,7 @@ from board.BoardState import BoardState
 from board.Field import Field
 from configuration.GameConfiguration import GameConfiguration
 from game.GameState import GameState, GameStatus, is_playing_status, is_end_status, WinnerStatus
-from player.PlayerState import PlayerState
+from game.player.PlayerState import PlayerState
 
 
 class Game(QWidget):

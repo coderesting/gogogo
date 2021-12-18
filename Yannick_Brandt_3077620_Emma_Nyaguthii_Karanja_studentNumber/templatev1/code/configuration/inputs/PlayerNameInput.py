@@ -1,7 +1,7 @@
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QGridLayout
 
-from configuration.InputErrorLabel import InputErrorLabel
+from configuration.inputs.InputErrorLabel import InputErrorLabel
 
 
 class PlayerNameInput(QWidget):

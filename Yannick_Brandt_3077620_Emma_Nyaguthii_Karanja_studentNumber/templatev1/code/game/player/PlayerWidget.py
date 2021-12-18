@@ -1,10 +1,10 @@
-from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import QWidget, QLabel, QHBoxLayout, QGridLayout
 from time import strftime, gmtime
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QWidget, QLabel, QHBoxLayout
 
-from player.PlayerState import PlayerState
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QGridLayout
+from PyQt5.QtWidgets import QWidget, QLabel
+
+from game.player.PlayerState import PlayerState
 
 
 class PlayerWidget(QWidget):
@@ -22,5 +22,5 @@ class PlayerWidget(QWidget):
         self.setLayout(layout)
 
     def set_state(self, state: PlayerState):
-        self.captures.setText("Captures: "+str(state.captured_stones))
+        self.captures.setText("Captures: " + str(state.captured_stones))
         self.time.setText("Remaining time " + strftime("%M:%S", gmtime(state.remaining_time)) + " mins")
