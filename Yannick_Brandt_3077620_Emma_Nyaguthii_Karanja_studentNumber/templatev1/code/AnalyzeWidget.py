@@ -1,5 +1,7 @@
 from PyQt5.QtCore import Qt, pyqtSignal, QPropertyAnimation, QEasingCurve
-from PyQt5.QtWidgets import QWidget, QSlider, QLabel, QPushButton, QHBoxLayout, QVBoxLayout
+from PyQt5.QtWidgets import QWidget, QSlider, QLabel, QHBoxLayout, QVBoxLayout
+
+from BigButton import BigButton
 
 
 class AnalyzeWidget(QWidget):
@@ -18,8 +20,7 @@ class AnalyzeWidget(QWidget):
         self.slider.setMinimum(0)
         self.slider.valueChanged.connect(self.show_step)
 
-        new_game_button = QPushButton("New Game")
-        new_game_button.setStyleSheet('font-size: 14px; padding:10px')
+        new_game_button = BigButton("New Game")
         new_game_button.clicked.connect(self.new_game)
 
         self.anim = QPropertyAnimation(self.slider, b"value")

@@ -1,7 +1,8 @@
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QPushButton, QHBoxLayout
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QHBoxLayout
 
+from BigButton import BigButton
 from board.BoardState import BoardState
 from board.BoardWidget import BoardWidget
 from board.Field import Field
@@ -39,12 +40,10 @@ class TutorialWindow(QDialog):
         self.board = BoardWidget()
         self.board.clicked_field.connect(self.clicked_field)
 
-        self.back_button = QPushButton("Back")
-        self.back_button.setStyleSheet('font-size: 12px; padding:8px')
+        self.back_button = BigButton("Back")
         self.back_button.clicked.connect(self.previous_step)
 
-        self.next_button = QPushButton("Next")
-        self.next_button.setStyleSheet('font-size: 12px; padding:8px')
+        self.next_button = BigButton("Next")
         self.next_button.clicked.connect(self.next_step)
         self.next_button.setDefault(True)
 
@@ -103,6 +102,7 @@ class TutorialWindow(QDialog):
         self.next_button.setDisabled(step.field_to_click is not None)
         self.next_button.setText("Finish Tutorial" if self.current_step == len(self.steps) - 1 else "Next")
         self.back_button.setDisabled(self.current_step == 0)
+        self.back_button.clearFocus()
 
     def create_steps(self):
 

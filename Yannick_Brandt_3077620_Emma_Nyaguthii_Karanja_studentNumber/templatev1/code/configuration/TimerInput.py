@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QCheckBox, QSpinBox, QFormLayout
+from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QCheckBox, QSpinBox, QFormLayout, QSizePolicy
 
 
 class TimerInput(QWidget):
@@ -12,6 +12,7 @@ class TimerInput(QWidget):
         self.timer_input.setMaximum(500)
         self.timer_input.setValue(15)
         self.timer_input.setSuffix('min')
+        self.timer_input.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
 
         self.use_timer_checkbox = QCheckBox()
         self.use_timer_checkbox.setCheckState(2)
@@ -29,7 +30,6 @@ class TimerInput(QWidget):
         timer_layout.setSpacing(10)
         timer_layout.addWidget(timer_label)
         timer_layout.addLayout(input_layout)
-        timer_layout.setContentsMargins(5, 0, 5, 20)
         timer_layout.setContentsMargins(5, 15, 5, 15)
         self.setLayout(timer_layout)
 

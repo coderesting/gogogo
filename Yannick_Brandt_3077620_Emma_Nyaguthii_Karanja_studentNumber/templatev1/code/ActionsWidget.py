@@ -1,5 +1,8 @@
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QWidget, QGridLayout, QPushButton
+from PyQt5.QtWidgets import QWidget, QHBoxLayout
+
+from BigButton import BigButton
+
 
 class ActionsWidget(QWidget):
     reset = pyqtSignal()
@@ -7,16 +10,17 @@ class ActionsWidget(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        layout = QGridLayout()
 
-        self.reset_button = QPushButton("Reset", self)
+        self.reset_button = BigButton("Reset")
         self.reset_button.clicked.connect(self.reset.emit)
 
-        self.pass_button = QPushButton("Pass", self)
+        self.pass_button = BigButton("Pass")
         self.pass_button.clicked.connect(self.pass_stone.emit)
 
-        layout.addWidget(self.reset_button, 0, 0)
-        layout.addWidget(self.pass_button, 0, 1)
+        layout = QHBoxLayout()
+        layout.setSpacing(20)
+        layout.addWidget(self.reset_button)
+        layout.addWidget(self.pass_button)
 
         self.setLayout(layout)
-
+        self.setMinimumWidth(300)

@@ -99,7 +99,7 @@ class GoApplication(QMainWindow):
         self.layout.addWidget(self.status_widget, 0, 1)
         self.layout.addWidget(self.playerWidgets[1], 0, 2)
         self.layout.addWidget(self.boardWidget, 1, 1)
-        self.layout.addWidget(self.actionsWidget, 2, 1)
+        self.layout.addWidget(self.actionsWidget, 2, 1, Qt.AlignCenter)
 
         self.boardWidget.highlight_fields(None)
         self.game.start_new_game(conf)
