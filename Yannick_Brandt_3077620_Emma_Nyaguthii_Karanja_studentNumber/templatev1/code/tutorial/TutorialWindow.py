@@ -35,18 +35,29 @@ class TutorialWindow(QDialog):
         self.description = QLabel()
         self.description.setStyleSheet('font-size:13px')
         self.description.setWordWrap(True)
+
         self.board = BoardWidget()
         self.board.clicked_field.connect(self.clicked_field)
+
+        self.back_button = QPushButton("Back")
+        self.back_button.setStyleSheet('font-size: 12px; padding:8px')
+        self.back_button.clicked.connect(self.previous_step)
+
         self.next_button = QPushButton("Next")
         self.next_button.setStyleSheet('font-size: 12px; padding:8px')
         self.next_button.clicked.connect(self.next_step)
+        self.next_button.setDefault(True)
+
+        buttons_layout = QHBoxLayout()
+        buttons_layout.addWidget(self.back_button, 1)
+        buttons_layout.addWidget(self.next_button, 2)
 
         layout = QVBoxLayout()
         layout.setSpacing(15)
         layout.addLayout(title_layout)
         layout.addWidget(self.description)
         layout.addWidget(self.board)
-        layout.addWidget(self.next_button)
+        layout.addLayout(buttons_layout)
         self.setLayout(layout)
         self.setContentsMargins(5, 5, 5, 5)
 
@@ -66,8 +77,6 @@ class TutorialWindow(QDialog):
                 self.board.show_invalid_move(field)
             self.current_step += 1
             self.show_step()
-        else:
-            self.board.show_invalid_move(field)
 
     def next_step(self):
         if self.current_step < len(self.steps) - 1:
@@ -75,6 +84,11 @@ class TutorialWindow(QDialog):
             self.show_step()
         else:
             self.close()
+
+    def previous_step(self):
+        if self.current_step > 0:
+            self.current_step -= 1
+            self.show_step()
 
     def show_step(self):
         step = self.steps[self.current_step]
@@ -88,6 +102,7 @@ class TutorialWindow(QDialog):
 
         self.next_button.setDisabled(step.field_to_click is not None)
         self.next_button.setText("Finish Tutorial" if self.current_step == len(self.steps) - 1 else "Next")
+        self.back_button.setDisabled(self.current_step == 0)
 
     def create_steps(self):
 
@@ -103,9 +118,9 @@ class TutorialWindow(QDialog):
 
         self.steps.append(
             TutorialStep("Scoring 1",
-                         "Score = <b>8</b> Stones + <b>2</b> territory + <b>0</b> captured stones<br><br>territory: "
-                         "encapsulated "
-                         "fields<br>captured stones: explained later", scoring_state, None, False))
+                         "Your score is <b>10</b> (<b>8</b> Stones + <b>2</b> territory fields)<br>territory: number "
+                         "of encapsulated fields",
+                         scoring_state, None, False))
 
         scoring_state_2 = scoring_state.clone()
         scoring_state_2.state = [[0, -1, -1, -1, 1, -1, -1],
@@ -118,7 +133,8 @@ class TutorialWindow(QDialog):
 
         self.steps.append(
             TutorialStep("Scoring 2",
-                         "The player with the highest score wins<br>White <b>11</b> - <b>10</b> Black", scoring_state_2,
+                         "The player with the highest score wins<br>Score: White <b>11</b> - <b>10</b> Black",
+                         scoring_state_2,
                          None, False))
 
         # Capturing 1
@@ -141,7 +157,9 @@ class TutorialWindow(QDialog):
         after_capture_state.set_field_value(Field(3, 4), -1)
         after_capture_state.set_field_value(Field(4, 3), 0)
 
-        self.steps.append(TutorialStep(None, "Great. You captured <b>3</b> stones", after_capture_state, None, False))
+        self.steps.append(
+            TutorialStep(None, "Great. You captured <b>3</b> stones. <br>These are also added to your <b>score</br",
+                         after_capture_state, None, False))
 
         no_capture_state = capture_state.clone()
         no_capture_state.set_field_value(Field(3, 4), -1)
@@ -182,7 +200,7 @@ class TutorialWindow(QDialog):
                                           [-1, -1, 0, -1, -1, -1, -1],
                                           [-1, -1, 0, -1, -1, -1, -1]]
 
-        self.steps.append(TutorialStep(None, "You captured <b>10</b> stones", after_wall_capture_state, None, False))
+        self.steps.append(TutorialStep(None, "You captured <b>11</b> stones", after_wall_capture_state, None, False))
 
         # Suicide rule
         suicide_state = BoardState()
@@ -225,18 +243,18 @@ class TutorialWindow(QDialog):
 
         # Pass
         pass_state = BoardState()
-        pass_state.state = [[1, 1, 1, 1, 1, -1, -1],
-                            [-1, 1, 1, -1, 1, -1, -1],
+        pass_state.state = [[1, 1, 1, 1, 1, -1, 1],
+                            [-1, 1, 1, -1, 1, 1, -1],
                             [1, 1, -1, 1, 1, 1, 1],
                             [1, -1, 1, 1, 1, -1, 1],
                             [1, 1, 1, 1, 1, 1, 1],
                             [0, 0, 0, 0, 0, 0, 0],
-                            [-1, 0, -1, -1, 0, -1, 0]]
+                            [-1, 0, 0, -1, 0, -1, 0]]
 
         self.steps.append(
             TutorialStep("Pass",
                          "If you feel like you have no moves left you can pass.<br>The game ends after <b>2</b> "
-                         "consecutive passes ", pass_state, None, True))
+                         "consecutive passes.", pass_state, None, True))
 
         # Finish
         go_state = BoardState()
