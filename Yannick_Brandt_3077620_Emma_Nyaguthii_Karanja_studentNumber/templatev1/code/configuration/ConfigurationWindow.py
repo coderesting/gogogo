@@ -2,9 +2,9 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QVBoxLayout, QWidget, QLayout
 
 from Window import Window
-from configuration.ActionButtons import ActionButtons
 from configuration.GameConfiguration import GameConfiguration
 from configuration.WelcomeHeadline import WelcomeHeadline
+from configuration.inputs.ActionButtons import ActionButtons
 from configuration.inputs.HandicapInput import HandicapInput
 from configuration.inputs.PlayerNameInput import PlayerNameInput
 from configuration.inputs.TimerInput import TimerInput
@@ -40,6 +40,7 @@ class ConfigurationWindow(Window):
         layout.addStretch()
 
         self.central_widget = QWidget()
+        self.central_widget.setContentsMargins(10, 10, 10, 10)
         self.central_widget.setLayout(layout)
         self.setCentralWidget(self.central_widget)
 
