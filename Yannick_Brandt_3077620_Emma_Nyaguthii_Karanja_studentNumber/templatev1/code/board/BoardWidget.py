@@ -86,7 +86,7 @@ class BoardWidget(QWidget):
             self.draw_highlighted_fields(painter)
 
     def draw_stones(self, painter: QPainter):
-        """ Checks every field and draws a white or black stone depending on the board status
+        """ Checks every field and draws a white or black stone_pixmap depending on the board status
         :param painter: QPainter to draw on
         """
         for field in self.state:
@@ -96,10 +96,10 @@ class BoardWidget(QWidget):
                 self.draw_stone(painter, field, QImage('icons/whiteStone.png'))
 
     def draw_stone(self, painter: QPainter, field: Field, image: QImage):
-        """ Draws a stone image in the specified position
+        """ Draws a stone_pixmap image in the specified position
         :param painter: QPainter to draw on
-        :param field: field to place the stone in
-        :param image: square QImage of the stone to draw
+        :param field: field to place the stone_pixmap in
+        :param image: square QImage of the stone_pixmap to draw
         """
         field_rect = self.get_field_rect(field)
         # create margins with same space (field_padding) in all directions

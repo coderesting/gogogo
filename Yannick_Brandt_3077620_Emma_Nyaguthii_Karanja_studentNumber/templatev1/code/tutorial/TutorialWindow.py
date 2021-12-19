@@ -244,12 +244,12 @@ class TutorialWindow(QDialog):
         ko_state_captured.set_field_value(Field(3, 4), -1)
         self.steps.append(
             TutorialStep("KO rule",
-                         "White captured your stone, but you can't recapture because this would lead to an infinite "
+                         "White captured your stone_pixmap, but you can't recapture because this would lead to an infinite "
                          "loop",
                          ko_state_captured, Field(3, 4), True))
 
         self.steps.append(TutorialStep("KO rule",
-                                       "White captured your stone, but you can't recapture because this would lead to "
+                                       "White captured your stone_pixmap, but you can't recapture because this would lead to "
                                        "an infinite loop", ko_state_captured, None, False))
 
         # Pass

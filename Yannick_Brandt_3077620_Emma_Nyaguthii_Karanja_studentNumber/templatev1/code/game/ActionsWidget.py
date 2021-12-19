@@ -8,7 +8,7 @@ class ActionsWidget(QWidget):
     """Shows restart and pass buttons
 
     :signal restart(): Request to restart the current game
-    :signal pass_stone(): Request to pass a stone
+    :signal pass_stone(): Request to pass a stone_pixmap
     """
     restart = pyqtSignal()
     pass_stone = pyqtSignal()

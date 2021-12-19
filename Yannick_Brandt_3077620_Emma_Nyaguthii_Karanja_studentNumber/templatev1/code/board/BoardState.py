@@ -15,8 +15,8 @@ class BoardState:
     [-1, -1, -1, -1, -1, -1, -1]
     [-1, -1, -1, -1, -1, -1, -1]]
     -1 = free field
-    0 = black stone
-    1 = white stone
+    0 = black stone_pixmap
+    1 = white stone_pixmap
     """
 
     def __init__(self):
@@ -27,16 +27,16 @@ class BoardState:
         """Sets the value of a field
         :field: Field to set the value for
         :value: -1 = free field
-                0 = black stone
-                1 = white stone
+                0 = black stone_pixmap
+                1 = white stone_pixmap
         """
         self.state[field.row][field.col] = value
 
     def get_field_value(self, field: Field):
         """
         :returns:   -1 = free field
-                    0 = black stone
-                    1 = white stone
+                    0 = black stone_pixmap
+                    1 = white stone_pixmap
         """
         return self.state[field.row][field.col]
 

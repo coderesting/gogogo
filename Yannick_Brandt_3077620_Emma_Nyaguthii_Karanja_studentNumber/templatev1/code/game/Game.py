@@ -85,7 +85,7 @@ class Game(QWidget):
         self.board_state_changed.emit(state.board_state)
 
     def pass_stone(self):
-        """Passes a stone to the other player. Two consecutive passes from one player end the game"""
+        """Passes a stone_pixmap to the other player. Two consecutive passes from one player end the game"""
         self.player_states[self.current_player].consecutive_passes += 1
         self.player_states[1 - self.current_player].captured_stones += 1
 
@@ -95,11 +95,11 @@ class Game(QWidget):
             self.set_game_status(GameStatus.END_TWO_PASSES)
 
     def place_stone(self, field):
-        """ Tries to place a stone on the board. This method can result in two actions:
-        1. The move was valid and the stone is placed
+        """ Tries to place a stone_pixmap on the board. This method can result in two actions:
+        1. The move was valid and the stone_pixmap is placed
         2. The move was invalid and the invalid_move signal is triggered
 
-        :param field: field to put the stone on
+        :param field: field to put the stone_pixmap on
         """
         if not is_playing_status(self.status):
             return
@@ -128,8 +128,8 @@ class Game(QWidget):
         :param current_player: 0 or 1
         """
         self.current_player = current_player
-        self.player_states[1 - self.current_player].is_playing = False
-        self.player_states[self.current_player].is_playing = True
+        self.player_states[1 - self.current_player].player_name = False
+        self.player_states[self.current_player].player_name = True
 
         self.player_states_changed.emit(self.player_states)
         self.set_game_status(GameStatus.TURN_PLAYER_0 if current_player == 0 else GameStatus.TURN_PLAYER_1)
@@ -284,11 +284,12 @@ class Game(QWidget):
                     continue
 
         for i in [0, 1]:
-            # If there is only one stone on the field all remaining free fields would count as that players' territory
+            # If there is only one stone_pixmap on the field all remaining free fields would count as that players' territory
             # This should not be true and the territory needs to be set to zero
             if len(territories[i]) == 48:
                 territories[i] = []
-            self.player_states[i].territory = len(territories[i]) + len(self.get_fields_of_type(i))
+            self.player_states[i].territory = len(territories[i])
+            self.player_states[i].own_stones = len(self.get_fields_of_type(i))
 
     def get_fields_of_type(self, field_type: int):
         """ Returns all fields of one type

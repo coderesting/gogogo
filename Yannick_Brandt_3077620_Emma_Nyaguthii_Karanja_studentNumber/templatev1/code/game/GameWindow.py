@@ -44,6 +44,7 @@ class GameWindow(Window):
         self.central_widget = QWidget()
         self.central_layout = QGridLayout()
         self.central_widget.setLayout(self.central_layout)
+        self.central_layout.setSpacing(20)
         self.setCentralWidget(self.central_widget)
 
     def connect_widgets(self):
@@ -82,9 +83,9 @@ class GameWindow(Window):
         self.playerWidgets[1] = PlayerWidget(conf.names[1], QPixmap('icons/whiteStone.png'))
         self.status_widget = StatusWidget(conf.names)
 
-        self.central_layout.addWidget(self.playerWidgets[0], 0, 0)
+        self.central_layout.addWidget(self.playerWidgets[0], 0, 0, 2, 1, Qt.AlignTop)
         self.central_layout.addWidget(self.status_widget, 0, 1)
-        self.central_layout.addWidget(self.playerWidgets[1], 0, 2)
+        self.central_layout.addWidget(self.playerWidgets[1], 0, 2, 2, 1, Qt.AlignTop)
         self.central_layout.addWidget(self.boardWidget, 1, 1)
         self.central_layout.addWidget(self.actionsWidget, 2, 1, Qt.AlignCenter)
 
@@ -96,9 +97,9 @@ class GameWindow(Window):
 
     def show_game_end_layout(self):
         self.clear_layout()
-        self.central_layout.addWidget(self.playerWidgets[0], 0, 0)
+        self.central_layout.addWidget(self.playerWidgets[0], 0, 0, 2, 1, Qt.AlignTop)
         self.central_layout.addWidget(self.status_widget, 0, 1)
-        self.central_layout.addWidget(self.playerWidgets[1], 0, 2)
+        self.central_layout.addWidget(self.playerWidgets[1], 0, 2, 2, 1, Qt.AlignTop)
         self.central_layout.addWidget(self.boardWidget, 1, 1)
         self.central_layout.addWidget(self.result_widget, 1, 1)
 
@@ -107,9 +108,9 @@ class GameWindow(Window):
 
     def show_analysis_layout(self):
         self.clear_layout()
-        self.central_layout.addWidget(self.playerWidgets[0], 0, 0)
+        self.central_layout.addWidget(self.playerWidgets[0], 0, 0, 2, 1, Qt.AlignTop)
         self.central_layout.addWidget(self.status_widget, 0, 1)
-        self.central_layout.addWidget(self.playerWidgets[1], 0, 2)
+        self.central_layout.addWidget(self.playerWidgets[1], 0, 2, 2, 1, Qt.AlignTop)
         self.central_layout.addWidget(self.boardWidget, 1, 1)
         self.central_layout.addWidget(self.analyze_widget, 2, 1, Qt.AlignCenter)
 
