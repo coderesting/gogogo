@@ -79,7 +79,7 @@ class GameWindow(Window):
         self.clear_layout()
         # Create new Status/PlayerWidgets with updated names
         self.playerWidgets[0] = PlayerWidget(conf.names[0], QPixmap('icons/blackStone.png'))
-        self.playerWidgets[1] = PlayerWidget(conf.names[1], QPixmap('icons/blackStone.png'))
+        self.playerWidgets[1] = PlayerWidget(conf.names[1], QPixmap('icons/whiteStone.png'))
         self.status_widget = StatusWidget(conf.names)
 
         self.central_layout.addWidget(self.playerWidgets[0], 0, 0)
