@@ -162,7 +162,8 @@ class TutorialWindow(QDialog):
         after_capture_state.set_field_value(Field(4, 3), 0)
 
         self.steps.append(
-            TutorialStep(None, "Great. You captured <b>3</b> stones. <br>These are also added to your <b>score</br",
+            TutorialStep("Capturing 1",
+                         "Great. You captured <b>3</b> stones. <br>These are also added to your <b>score</br",
                          after_capture_state, None, False))
 
         no_capture_state = capture_state.clone()
@@ -175,12 +176,13 @@ class TutorialWindow(QDialog):
 
         after_no_capture_state = no_capture_state.clone()
         after_no_capture_state.set_field_value(Field(4, 3), 0)
-        self.steps.append(TutorialStep(None, "Close the hole to capture", after_no_capture_state, Field(3, 4), False))
+        self.steps.append(
+            TutorialStep("Capturing 2", "Close the hole to capture", after_no_capture_state, Field(3, 4), False))
 
         closed_hole_state = after_capture_state.clone()
         closed_hole_state.set_field_value(Field(3, 4), 0)
 
-        self.steps.append(TutorialStep(None, "You captured <b>2</b> stones", closed_hole_state, None, False))
+        self.steps.append(TutorialStep("Capturing 2", "You captured <b>2</b> stones", closed_hole_state, None, False))
 
         # Capturing 3
         wall_capture_state = BoardState()
@@ -204,7 +206,8 @@ class TutorialWindow(QDialog):
                                           [-1, -1, 0, -1, -1, -1, -1],
                                           [-1, -1, 0, -1, -1, -1, -1]]
 
-        self.steps.append(TutorialStep(None, "You captured <b>11</b> stones", after_wall_capture_state, None, False))
+        self.steps.append(
+            TutorialStep("Capturing 3", "You captured <b>11</b> stones", after_wall_capture_state, None, False))
 
         # Suicide rule
         suicide_state = BoardState()
@@ -220,7 +223,9 @@ class TutorialWindow(QDialog):
             TutorialStep("Suicide rule", "You can't play in a place where you would be captured immediately",
                          suicide_state, Field(3, 3), True))
 
-        self.steps.append(TutorialStep(None, None, suicide_state, None, False))
+        self.steps.append(
+            TutorialStep("Suicide rule", "You can't play in a place where you would be captured immediately",
+                         suicide_state, None, False))
 
         # KO rule
         ko_state = BoardState()
@@ -238,12 +243,14 @@ class TutorialWindow(QDialog):
         ko_state_captured.set_field_value(Field(3, 3), 1)
         ko_state_captured.set_field_value(Field(3, 4), -1)
         self.steps.append(
-            TutorialStep(None,
+            TutorialStep("KO rule",
                          "White captured your stone, but you can't recapture because this would lead to an infinite "
                          "loop",
                          ko_state_captured, Field(3, 4), True))
 
-        self.steps.append(TutorialStep(None, None, ko_state_captured, None, False))
+        self.steps.append(TutorialStep("KO rule",
+                                       "White captured your stone, but you can't recapture because this would lead to "
+                                       "an infinite loop", ko_state_captured, None, False))
 
         # Pass
         pass_state = BoardState()
