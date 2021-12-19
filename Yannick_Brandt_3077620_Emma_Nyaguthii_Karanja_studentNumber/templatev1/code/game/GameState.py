@@ -12,7 +12,6 @@ class WinnerStatus(Enum):
 
 class GameStatus(Enum):
     END_TWO_PASSES = 0
-    END_RESIGN = 1
     END_NO_MOVES = 2
     END_TIMEOUT = 3
     TURN_PLAYER_0 = 4
@@ -21,8 +20,7 @@ class GameStatus(Enum):
 
 
 def is_end_status(status: GameStatus):
-    return status == GameStatus.END_RESIGN or status == GameStatus.END_NO_MOVES or \
-           status == GameStatus.END_TWO_PASSES or status == GameStatus.END_TIMEOUT
+    return status == GameStatus.END_NO_MOVES or status == GameStatus.END_TWO_PASSES or status == GameStatus.END_TIMEOUT
 
 
 def is_playing_status(status: GameStatus):
