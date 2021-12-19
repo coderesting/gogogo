@@ -312,6 +312,11 @@ class Game(QWidget):
         if not is_end_status(self.status):
             return WinnerStatus.NONE
 
+        if self.player_states[0].remaining_time == 0:
+            return WinnerStatus.PLAYER_1
+        elif self.player_states[1].remaining_time == 0:
+            return WinnerStatus.PLAYER_0
+
         player0_score = len(self.get_fields_of_type(0)) + self.player_states[0].captured_stones + self.player_states[
             0].territory
         player1_score = len(self.get_fields_of_type(1)) + self.player_states[1].captured_stones + self.player_states[

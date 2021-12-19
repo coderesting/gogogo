@@ -27,13 +27,13 @@ class StatusWidget(QWidget):
         :param game_status: current GameStatus
         :param winner_status: current WinnerStatus
         """
-        
+
         text = "Error: unknown status"
         if is_end_status(game_status):
             if winner_status == WinnerStatus.PLAYER_0:
-                text = self.player_names[0] + ' won'
+                text = self.player_names[0] + ' won🎉'
             elif winner_status == WinnerStatus.PLAYER_1:
-                text = self.player_names[1] + ' won'
+                text = self.player_names[1] + ' won🎉'
             elif winner_status == WinnerStatus.DRAW:
                 text = 'Draw'
 
