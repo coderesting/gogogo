@@ -80,8 +80,9 @@ class AnalyzeWidget(QWidget):
     def set_history_steps(self, steps: int):
         """Set the number of steps for in the current game"""
         self.slider.setMaximum(steps)
-        
         self.anim.setStartValue(steps)
-        duration = max(min(steps * 100, 100), 3000)
+        duration = max(steps * 100, 3000)
         self.anim.setDuration(duration)
         self.anim.start()
+        if steps == 0:
+            self.step_changed(0)
