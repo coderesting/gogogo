@@ -13,7 +13,7 @@ class StatusWidget(QWidget):
         self.player_names = player_names
 
         self.status_label = QLabel()
-        self.status_label.setStyleSheet('font-size:16px')
+        self.status_label.setStyleSheet('font-size:18px; font-weight:bold')
         self.status_label.setAlignment(Qt.AlignCenter)
         self.status_label.setWordWrap(True)
 
@@ -31,9 +31,9 @@ class StatusWidget(QWidget):
         text = "Error: unknown status"
         if is_end_status(game_status):
             if winner_status == WinnerStatus.PLAYER_0:
-                text = self.player_names[0] + ' won🎉'
+                text = '🎉 ' + self.player_names[0] + ' won 🎉'
             elif winner_status == WinnerStatus.PLAYER_1:
-                text = self.player_names[1] + ' won🎉'
+                text = '🎉 ' + self.player_names[1] + ' won 🎉'
             elif winner_status == WinnerStatus.DRAW:
                 text = 'Draw'
 

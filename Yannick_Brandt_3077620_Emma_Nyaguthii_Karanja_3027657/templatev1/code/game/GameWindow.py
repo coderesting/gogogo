@@ -29,8 +29,8 @@ class GameWindow(Window):
         self.status_widget = StatusWidget(['', ''])
         self.boardWidget = BoardWidget()
         self.result_widget = ResultWidget()
-        self.playerWidgets = [PlayerWidget('', QPixmap('icons/blackStone.png'), parent=self),
-                              PlayerWidget('', QPixmap('icons/whiteStone.png'), parent=self)]
+        self.playerWidgets = [PlayerWidget('', QPixmap(), QPixmap(), parent=self),
+                              PlayerWidget('', QPixmap(), QPixmap(), parent=self)]
         self.actionsWidget = ActionsWidget()
         self.analyze_widget = AnalyzeWidget()
         self.placeholder_widget = QWidget()
@@ -79,8 +79,10 @@ class GameWindow(Window):
     def show_game_layout(self, conf: GameConfiguration):
         self.clear_layout()
         # Create new Status/PlayerWidgets with updated names
-        self.playerWidgets[0] = PlayerWidget(conf.names[0], QPixmap('icons/blackStone.png'))
-        self.playerWidgets[1] = PlayerWidget(conf.names[1], QPixmap('icons/whiteStone.png'))
+        self.playerWidgets[0] = PlayerWidget(conf.names[0], QPixmap('icons/blackStone.png'),
+                                             QPixmap('icons/blackStone_active.png'))
+        self.playerWidgets[1] = PlayerWidget(conf.names[1], QPixmap('icons/whiteStone.png'),
+                                             QPixmap('icons/whiteStone_active.png'))
         self.status_widget = StatusWidget(conf.names)
 
         self.central_layout.addWidget(self.playerWidgets[0], 0, 0, 2, 1, Qt.AlignTop)

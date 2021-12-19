@@ -128,8 +128,8 @@ class Game(QWidget):
         :param current_player: 0 or 1
         """
         self.current_player = current_player
-        self.player_states[1 - self.current_player].player_name = False
-        self.player_states[self.current_player].player_name = True
+        self.player_states[1 - self.current_player].is_playing = False
+        self.player_states[self.current_player].is_playing = True
 
         self.player_states_changed.emit(self.player_states)
         self.set_game_status(GameStatus.TURN_PLAYER_0 if current_player == 0 else GameStatus.TURN_PLAYER_1)
