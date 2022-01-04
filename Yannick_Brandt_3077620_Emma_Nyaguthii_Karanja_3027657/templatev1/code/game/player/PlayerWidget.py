@@ -30,13 +30,13 @@ class PlayerWidget(QGroupBox):
         self.score = QLabel()
         self.time = QLabel()
 
-        hide_time_label = QLabel("Hide time: ")
+        self.hide_time_label = QLabel("Hide time: ")
         self.hide_time_checkbox = QCheckBox()
         self.hide_time_checkbox.stateChanged.connect(lambda val: self.time.hide() if val else self.time.show())
 
         hide_time_layout = QHBoxLayout()
         hide_time_layout.setAlignment(Qt.AlignLeft)
-        hide_time_layout.addWidget(hide_time_label)
+        hide_time_layout.addWidget(self.hide_time_label)
         hide_time_layout.addWidget(self.hide_time_checkbox)
 
         player_layout = QVBoxLayout()
@@ -75,3 +75,10 @@ class PlayerWidget(QGroupBox):
             self.time.setText("Remaining time: " + strftime("%M:%S", gmtime(state.remaining_time)))
         else:
             self.time.hide()
+
+        if state.remaining_time is not None:
+            self.hide_time_checkbox.show()
+            self.hide_time_label.show()
+        else:
+            self.hide_time_checkbox.hide()
+            self.hide_time_label.hide()
