@@ -46,8 +46,8 @@ class RedCross(QWidget):
         """
         cross_rect = field_rect - (QMarginsF() + field_padding)
         # transform the invalidFieldState (0-100) to opacity values (0-255-0)
-        opacity = (-51 / 500) * pow(self._invalid_field_state, 2) + (51 / 5) * self._invalid_field_state
-        pen = QPen(QColor(255, 0, 0, opacity), field_padding * 1.5)
+        opacity = int((-51 / 500) * pow(self._invalid_field_state, 2) + (51 / 5) * self._invalid_field_state)
+        pen = QPen(QColor(255, 0, 0, alpha=opacity), field_padding * 1.5)
         pen.setCapStyle(Qt.RoundCap)
         painter.setPen(pen)
         painter.drawLine(cross_rect.topLeft(), cross_rect.bottomRight())
