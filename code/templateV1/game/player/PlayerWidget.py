@@ -9,6 +9,8 @@ from game.player.PlayerState import PlayerState
 
 
 class PlayerWidget(QGroupBox):
+    """This widget displays renders the PlayerState to the screen"""
+
     def __init__(self, name: str, stone_pixmap: QPixmap, stone_active_pixmap: QPixmap, parent=None):
         super().__init__(parent)
         self.stone_pixmap = stone_pixmap.scaledToWidth(30, Qt.SmoothTransformation)
@@ -70,12 +72,14 @@ class PlayerWidget(QGroupBox):
 
         self.score.setText("<b>Score: " + str(state.captured_stones + state.own_stones + state.territory) + '</b>')
 
+        # Display the time conditionally
         if state.remaining_time is not None and self.hide_time_checkbox.checkState() == 0:
             self.time.show()
             self.time.setText("Remaining time: " + strftime("%M:%S", gmtime(state.remaining_time)))
         else:
             self.time.hide()
 
+        # Display the hide time checkbox conditionally
         if state.remaining_time is not None:
             self.hide_time_checkbox.show()
             self.hide_time_label.show()
